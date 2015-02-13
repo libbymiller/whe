@@ -1,8 +1,11 @@
-var express = require('express');
+var express = require('express'),
+    faye    = require('faye');
 
 var port = process.env.PORT | 3000;
 
-var app = express();
+var app = express(),
+    bayeux = new faye.NodeAdapter({mount: '/'}),
+    server;
 
 /*
   HTTP routes
@@ -23,9 +26,12 @@ app.post('/image', function (req, res) {
   res.sendStatus(202);
 });
 
-var server = app.listen(port, function () {
+server = app.listen(port, function () {
   var host = server.address().address,
       port = server.address().port;
 
   console.log('Collector API listening at http://%s:%s', host, port);
 });
+
+// Attach faye
+bayeux.attach(server);
