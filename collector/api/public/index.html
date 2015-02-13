@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WHE</title>
+  <script src="/faye/client.js"></script>
+</head>
+<body>
+  <h1>Dashboard</h1>
+  <script>
+    var client = new Faye.Client('http://localhost:3000/faye');
+    client.subscribe('/heartbeat', function (thing) {
+      console.log('Heartbeat: type: %o, id: %o', thing.type, thing.id);
+    });
+  </script>
+</body>
+</html>

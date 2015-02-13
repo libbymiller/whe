@@ -1,1 +1,2 @@
+sender: node ./sender/sender.js
 snapper: snapper/start.sh
