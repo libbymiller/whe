@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WHE</title>
+  <script src="/faye/client.js"></script>
+</head>
+<body>
+  <h1>Walls Have Eyes</h1>
+  <code>
+  </code>
+  <script>
+    var client = new Faye.Client('http://localhost:3000/faye');
+
+    client.subscribe('/render', handleRender);
+
+    function handleRender(data) {
+      console.log('RENDER', data);
+      document.querySelector('code').innerHTML = data;
+    }
+
+  </script>
+</body>
+</html>

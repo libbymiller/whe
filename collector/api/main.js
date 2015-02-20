@@ -1,6 +1,7 @@
 var http    = require('http'),
     express = require('express'),
-    faye    = require('faye');
+    faye    = require('faye'),
+    fs      = require('fs');
 
 var port = process.env.PORT;
 
@@ -18,10 +19,35 @@ bayeux.attach(server);
 app.use( express.static(__dirname + '/public') );
 
 /*
+  Simple template engine that just fetches html files
+  from disk.
+*/
+app.engine('.html', function (filePath, options, callback) { // define the template engine
+  fs.readFile(filePath, function (err, content) {
+    if (err) throw new Error(err);
+    return callback(null, content.toString());
+  })
+});
+app.set('views', __dirname + '/public');
+app.set('view engine', 'html');
+
+/*
   HTTP routes
 */
+app.get('/', function (req, res) {
+  res.render('index');
+});
+
 app.get('/status', function (req, res) {
   res.send('UP');
+});
+
+app.get('/screen', function (req, res) {
+  res.render('screen');
+});
+
+app.get('/dashboard', function (req, res) {
+  res.render('dashboard');
 });
 
 app.post('/metadata', function (req, res) {
