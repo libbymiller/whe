@@ -3,12 +3,24 @@ var http    = require('http'),
     faye    = require('faye'),
     fs      = require('fs');
 
+var Metadata = require('./lib/metadata');
+
 var port = process.env.PORT;
 
 var app = express(),
     bayeux = new faye.NodeAdapter({mount: '/faye'}),
     client = new faye.Client('http://localhost:' + port + '/faye'),
-    server = http.createServer(app);
+    server = http.createServer(app),
+    metadata = new Metadata();
+
+/*
+  Listen to data change events
+*/
+['add', 'change'].forEach(function (action) {
+  metadata.on(action, function (datum) {
+    console.log('METADATA - ', action, datum);
+  });
+});
 
 // Attach faye
 bayeux.attach(server);
@@ -55,10 +67,21 @@ app.get('/dashboard', function (req, res) {
   res.render('dashboard');
 });
 
+// Current state of everything
+app.get('/state', function (req, res) {
+  res.json({
+    metadata: metadata.toJSON()
+  });
+});
+
 // Wifi data from emitters
 app.post('/metadata', function (req, res) {
-  var data = req.body;
-  console.log('Metadata', data);
+  if (req.body && req.body.data) {
+    console.log('Received metadata', req.body.data);
+    metadata.replace(req.body.data);
+  } else {
+    console.error('No metadata in POST body', req.body);
+  }
   res.sendStatus(202);
 });
 
