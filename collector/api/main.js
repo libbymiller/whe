@@ -19,6 +19,11 @@ bayeux.attach(server);
 app.use( express.static(__dirname + '/public') );
 
 /*
+  Parse json out of POST bodies
+*/
+app.use( require('body-parser').json() );
+
+/*
   Simple template engine that just fetches html files
   from disk.
 */
@@ -50,7 +55,10 @@ app.get('/dashboard', function (req, res) {
   res.render('dashboard');
 });
 
+// Wifi data from emitters
 app.post('/metadata', function (req, res) {
+  var data = req.body;
+  console.log('Metadata', data);
   res.sendStatus(202);
 });
 

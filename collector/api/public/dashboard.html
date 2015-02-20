@@ -3,10 +3,12 @@
 <head>
   <title>WHE</title>
   <script src="/faye/client.js"></script>
+  <script src="/js/jquery-2.1.3.min.js"></script>
 </head>
 <body>
   <h1>Dashboard</h1>
   <button onclick="trigger()">Trigger</button>
+  <button onclick="postMetadata()">POST /metadata</button>
   <script>
     var client = new Faye.Client('http://localhost:3000/faye');
 
@@ -18,6 +20,17 @@
     function trigger() {
       client.publish('/trigger', {})
         .then(success, fail);
+    }
+
+    function postMetadata() {
+      var url = '/metadata',
+          opts = {
+            method: 'POST',
+            data: '{"data": [{"source":"moz1","id": "18:34:51:01:F4:32", "time": "1423086153", "power": "-46", "company": "Apple", "aps":""}]}',
+            contentType: 'application/json'
+          };
+
+      $.ajax(url, opts);
     }
 
     function success() {
