@@ -1,9 +1,12 @@
 var http    = require('http'),
     express = require('express'),
     faye    = require('faye'),
-    fs      = require('fs');
+    fs      = require('fs'),
+    multer  = require('multer'),
+    _       = require('lodash');
 
-var Metadata = require('./lib/metadata');
+var Metadata = require('./lib/metadata'),
+    Images   = require('./lib/images');
 
 var port = process.env.PORT;
 
@@ -11,7 +14,8 @@ var app = express(),
     bayeux = new faye.NodeAdapter({mount: '/faye'}),
     client = new faye.Client('http://localhost:' + port + '/faye'),
     server = http.createServer(app),
-    metadata = new Metadata();
+    metadata = new Metadata(),
+    images = new Images();
 
 /*
   Listen to data change events
@@ -34,6 +38,13 @@ app.use( express.static(__dirname + '/public') );
   Parse json out of POST bodies
 */
 app.use( require('body-parser').json() );
+
+/*
+  Handle multipart form data (with images)
+  By default files are stored in tmp so
+  will be deleted on restart
+*/
+app.use( multer({}) );
 
 /*
   Simple template engine that just fetches html files
@@ -70,7 +81,8 @@ app.get('/dashboard', function (req, res) {
 // Current state of everything
 app.get('/state', function (req, res) {
   res.json({
-    metadata: metadata.toJSON()
+    metadata: metadata.toJSON(),
+    images  : images.toJSON()
   });
 });
 
@@ -85,7 +97,31 @@ app.post('/metadata', function (req, res) {
   res.sendStatus(202);
 });
 
+app.get('/image/:name', function (req, res) {
+  var name = req.params.name,
+      file = images.findFile(name);
+
+  if (file && file.path && file.mimetype) {
+    fs.readFile(file.path, function (err, contents) {
+      if (err) {
+        console.err(err);
+        res.status(err).sendStatus(500);
+      } else {
+        res.set('Content-Type', file.mimetype).send(contents);
+      }
+    });
+  } else {
+    res.sendStatus(404);
+  }
+});
+
 app.post('/image', function (req, res) {
+  if (req.body) {
+    req.body.files = _.toArray(req.files);
+    images.replace(req.body);
+  } else {
+    console.warn('No body for image POST');
+  }
   res.sendStatus(202);
 });
 
@@ -99,6 +135,18 @@ app.post('/image', function (req, res) {
 //   console.log('New client connected', id);
 //   client.publish('/handshake', { id: id });
 // });
+
+/*
+  When the trigger happens, we wait X secs before
+  asking the client to render
+*/
+client.subscribe('/trigger', function () {
+  console.log('TRIGGER');
+  setTimeout(function () {
+    console.log('RENDER');
+    client.publish('/render', {});
+  }, 2000);
+});
 
 /*
   Start listening

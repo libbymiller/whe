@@ -37,6 +37,12 @@
     </tr>
   {{/metadata}}
   </table>
+
+  {{#images}}
+    {{#files}}
+      <img src="/image/{{name}}" />
+    {{/files}}
+  {{/images}}
   </script>
   <script>
     var client = new Faye.Client('http://localhost:3000/faye');
@@ -45,7 +51,7 @@
       template: '#ui-template'
     });
 
-    client.subscribe('/trigger', handleRender);
+    client.subscribe('/render', handleRender);
 
     function handleRender(data) {
       console.log('RENDER', data);
