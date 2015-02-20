@@ -232,10 +232,8 @@ static void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffe
         face_cascade.detectMultiScale(gray, faces, 1.1, 3, CV_HAAR_SCALE_IMAGE, Size(80,80));
         if(faces.size()>0){
             trace("found faces");
-//            system("xset s activate");
         }else{
-            trace("NO faces");
-//            system("xset s reset");
+//            trace("NO faces");
         }
 
 
@@ -260,7 +258,9 @@ static void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffe
         // Show the result:
         //imshow("camcvWin", gray);
         if(faces.size()>0){
-          imwrite( "../images/camcvimage.jpg", gray );
+          imwrite( "images/camcvface.jpg", gray );
+        }else{
+          imwrite( "images/camcvimage.jpg", gray );
         }
         key = (char) waitKey(1);
         nCount++;               // count frames displayed
@@ -640,7 +640,9 @@ int main(int argc, const char **argv)
 
 
                 // Now wait until we need to stop
-                vcos_sleep(state.timeout);
+                /// no timeout! 
+                //vcos_sleep(state.timeout);
+                vcos_sleep(2147483647);
 
                 //mmal_status_to_int(status);
                 // Disable all our ports that are not handled by connections
