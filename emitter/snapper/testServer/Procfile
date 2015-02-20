@@ -1,0 +1,2 @@
+faye: node faye.js
+app: rackup config.ru -s thin -p 8081 -E production -o 0.0.0.0
