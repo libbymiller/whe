@@ -14,8 +14,10 @@ Running
 
 To run a collector:
 
-    foreman start -f collector/Procfile
+    foreman start -p 3000 -f collector/Procfile
 
 To run an emitter:
 
-    foreman start -f emitter/Procfile
+    foreman start -p 4000 -f emitter/Procfile
+
+Start on specific ports since that's in the config.

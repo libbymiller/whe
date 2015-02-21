@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WHE</title>
+
+  <link rel="stylesheet" type="text/css" href="/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="/css/skeleton.css">
+
+  <script src="/faye/client.js"></script>
+  <script src="/js/jquery.js"></script>
+</head>
+<body>
+  <h1>Dashboard</h1>
+  <button onclick="trigger()" class="button-primary">Trigger</button>
+  <button onclick="postMetadata('moz1')">POST /metadata (moz1)</button>
+  <button onclick="postMetadata('moz2')">POST /metadata (moz2)</button>
+  <script>
+    var client = new Faye.Client('http://localhost:3000/faye');
+
+    // Display heartbeats of all clients
+    client.subscribe('/heartbeat', function (thing) {
+      console.log('Heartbeat: type: %o, id: %o', thing.type, thing.id);
+    });
+
+    function trigger() {
+      client.publish('/trigger', {})
+        .then(success, fail);
+    }
+
+    function postMetadata(source) {
+      var url = '/metadata',
+          opts = {
+            method: 'POST',
+            data: '{"data": [{"source":"' + source + '","id": "18:34:51:01:F4:32", "time": "' + Math.round( (Date.now() / 1000) ).toString() + '", "power": "-46", "company": "Apple", "aps":""}]}',
+            contentType: 'application/json'
+          };
+
+      $.ajax(url, opts);
+    }
+
+    function success() {
+      console.log('SUCCESS :-)');
+    }
+
+    function fail() {
+      console.error('FAIL :-(');
+    }
+  </script>
+</body>
+</html>

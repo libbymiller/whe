@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WHE</title>
+
+  <link rel="stylesheet" type="text/css" href="/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="/css/skeleton.css">
+
+  <script src="/faye/client.js"></script>
+
+  <script src="/js/jquery.js"></script>
+  <script src="/js/ractive.js"></script>
+</head>
+<body>
+  <h1>Walls Have Eyes</h1>
+  <div id="ui"></div>
+  <script id="ui-template" type="text/ractive">
+  <table>
+    <tr>
+      <th>Source</th>
+      <th>Id</th>
+      <th>Time</th>
+      <th>Power</th>
+      <th>Company</th>
+      <th>Aps</th>
+      <th>Friends</th>
+    </tr>
+  {{#metadata}}
+    <tr>
+      <td>{{source}}</td>
+      <td>{{id}}</td>
+      <td>{{time}}</td>
+      <td>{{power}}</td>
+      <td>{{company}}</td>
+      <td>{{aps}}</td>
+      <td>{{friends}}</td>
+    </tr>
+  {{/metadata}}
+  </table>
+
+  {{#images}}
+    {{#files}}
+      <img src="/image/{{name}}" />
+    {{/files}}
+  {{/images}}
+  </script>
+  <script>
+    var client = new Faye.Client('http://localhost:3000/faye');
+    var ractive = new Ractive({
+      el: '#ui',
+      template: '#ui-template'
+    });
+
+    client.subscribe('/render', handleRender);
+
+    function handleRender(data) {
+      console.log('RENDER', data);
+      $.get('/state')
+       .then(function (data) {
+          console.log('data', data);
+          ractive.set(data);
+        });
+    }
+
+  </script>
+</body>
+</html>
