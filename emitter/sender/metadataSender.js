@@ -1,5 +1,8 @@
 var faye = require('faye')
-    path = require('path');
+    path = require('path'),
+    http = require('http'),
+    fs = require('fs'),
+    request = require('request');
 
 var configPath = path.join(__dirname, '..', '..', 'shared', 'config.json'),
     config = require(configPath),
