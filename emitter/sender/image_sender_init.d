@@ -21,7 +21,7 @@ export PATH="${PATH:+$PATH:}/usr/sbin:/sbin"
 case "$1" in
   start)
     echo -n "Starting: "$NAME
-    /opt/node/bin/node /home/pi/mozfest/sender/metadata_sender.js > /var/log/$NAME_start.log 2>&1
+    /opt/node/bin/node /home/pi/whe/sender/image_sender.js > /var/log/$NAME_start.log 2>&1
     echo "."
     ;;
   stop)
