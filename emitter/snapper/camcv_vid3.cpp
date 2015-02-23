@@ -258,9 +258,9 @@ static void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffe
         // Show the result:
         //imshow("camcvWin", gray);
         if(faces.size()>0){
-          imwrite( "images/camcvface.jpg", gray );
+          imwrite( "snapper/images/camcvface.jpg", gray );
         }else{
-          imwrite( "images/camcvimage.jpg", gray );
+          imwrite( "snapper/images/camcvimage.jpg", gray );
         }
         key = (char) waitKey(1);
         nCount++;               // count frames displayed

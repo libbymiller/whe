@@ -1,0 +1,1 @@
+/home/pi/whe/emitter/snapper/CMakeFiles/camcv_vid3.dir
