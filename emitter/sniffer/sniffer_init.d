@@ -13,6 +13,8 @@ set -e
 
 export PATH=$PATH:/usr/local/bin
 export LOG_LEVEL=debug
+export PIDFILE=/var/run/whe-sniffer.pid
+export PORT=3000
 
 NAME=sniffer
 
@@ -21,12 +23,13 @@ export PATH="${PATH:+$PATH:}/usr/sbin:/sbin"
 case "$1" in
   start)
     echo -n "Starting: "$NAME
-    /bin/sh /home/pi/mozfest/start.sh > /var/log/$NAME_start.log 2>&1
+    start-stop-daemon --start --quiet --background --no-close --make-pidfile --pidfile $PIDFILE --exec /bin/sh /home/pi/whe/emitter/sniffer/start.sh > /var/log/$NAME_start.log 2>&1
     echo "."
     ;;
   stop)
     echo -n "Stopping: "$NAME
-    killall airodump-ng
+    start-stop-daemon --stop --quiet --oknodo --pidfile $PIDFILE
+    rm $PIDFILE
     echo "."
     ;;
   *)
