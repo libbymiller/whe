@@ -1,32 +1,32 @@
 #!/bin/sh
 ### BEGIN INIT INFO
-# Provides:          sender
+# Provides:          snapper
 # Required-Start:    $remote_fs $syslog
 # Required-Stop:     $remote_fs $syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: Wifi sender
-# Description:       Uses Airmon and Airodump to track wifi mac addresses
+# Short-Description: Snapper takes continous video, uses opencv to detect faces
+# Description:       Snapper takes continous video, uses opencv to detect faces
 ### END INIT INFO
 # Quick start-stop-daemon example, derived from Debian /etc/init.d/ssh
 set -e
 
-export PATH=$PATH:/usr/local/bin:/opt/node/bin
+export PATH=$PATH:/usr/local/bin
 export LOG_LEVEL=debug
 
-NAME=sender
+NAME=snapper
 
 export PATH="${PATH:+$PATH:}/usr/sbin:/sbin"
 
 case "$1" in
   start)
     echo -n "Starting: "$NAME
-    /opt/node/bin/node /home/pi/whe/emitter/sender/imageSender.js > /var/log/$NAME_start.log 2>&1
+    cd /home/pi/whe/emitter; ./snapper/camcv_vid3 > /var/log/$NAME_start.log 2>&1
     echo "."
     ;;
   stop)
     echo -n "Stopping: "$NAME
-    killall node
+    killall camcv_vid3
     echo "."
     ;;
   *)
