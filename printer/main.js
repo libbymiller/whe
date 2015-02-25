@@ -38,14 +38,15 @@ function fetchImageUrl(msg) {
                 var url = 'http://' + config.collector.host + ':' + config.collector.port + '/state';
 		console.log('url', url);
 		http.get(url, function (res) {
-			resolve({ msg: msg, res: res });
+			resolve(res);
 		});
 	});
 }
 
 function saveImage(obj) {
 	return new Promise(function (resolve, reject) {
-		var filepath = obj[0].imagePath;
+                //console.log(obj);
+		var filepath = obj.images[0].url;
 		var f = fs.createWriteStream(filepath);
 		obj.res.on('data', function (chunk) {
 			f.write(chunk);
