@@ -63,20 +63,7 @@ for line in fileinput.input():
             for item in to_send_time:           
              item_sm = item[0:7]
              item_sm = item_sm.replace(":","-")
-             #find the company from the oui file
-             cmd4 = "grep "+item_sm+" /home/pi/mozfest/oui_small.txt"
-             print cmd4
              company = "unknown"
-             try:
-               company_str = subprocess.check_output("grep '"+item_sm+"' /home/pi/mozfest/oui_small.txt", shell=True)
-               arr2 = re.split('\t',company_str)
-               company = arr2[2].rstrip()
-               company.replace('\n','')
-               company.replace('\r','')
-             except Exception, f:
-              print f
-              pass
-
              data_str = data_str + "{\"source\":\""+source+"\",\"id\": \""+item+"\", \"time\": \""+to_send_time[item]+"\", \"power\": \""+to_send_power[item]+"\", \"company\": \""+company+"\", \"aps\":\""+aps+"\"}"
 
              if(count < len(to_send_time)-1):
