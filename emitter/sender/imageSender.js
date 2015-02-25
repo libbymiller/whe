@@ -2,9 +2,12 @@ var faye = require('faye')
     path = require('path'),
     http = require('http'),
     fs = require('fs'),
-    request = require('request');
+    request = require('request'),
+    os = require("os");
 
-var source="snapper1";//fixme@@
+var source = os.hostname();
+
+console.log("source is "+source);
 
 var configPath = path.join(__dirname, '..', '..', 'shared', 'config.json'),
     config = require(configPath),
