@@ -132,20 +132,20 @@ function failure(e) {
 }
 
 function printFile(obj) {
-	console.log('print', arguments);
-	console.log('printing', obj.printFile)
-  var cmnd = "sudo chown pi:pi /dev/usb/lp0; echo '"+obj.printFile+"'  >  /dev/usb/lp0";
+  var escapedOutput = obj.printFile.replace(/\'/g, "'\\''");
+  console.log('printing', escapedOutput);
+  var cmnd = "sudo chown pi:pi /dev/usb/lp0; echo $'" + escapedOutput + "'  >  /dev/usb/lp0";
   // var cmnd = "sudo chown pi:pi /dev/usb/lp0; cat "+obj.printFile+"  >  /dev/usb/lp0";
 	exec(cmnd);
 }
 
 function writeFile(params) {
-	var contents = params[0],
-		obj = params[1];
+	var contents = JSON.stringify(params.msg.metadata),
+		obj = params;
 
 	var header = 'MOZFEST 2014\n*** YOUR SOUVENIR FROM THE ETHICAL DILEMMA CAFE ****\n\n';
 
-	console.log('Construct file');
+	console.log('Construct file', params);
 	return new Promise(function (resolve, reject) {
 		// var fileName = 'data-' + Date.now() + '.txt';
 		// var filepath = path.resolve('./data/' + fileName);
