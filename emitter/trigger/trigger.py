@@ -3,6 +3,10 @@ import sys
 import json
 import signal
 import time
+
+import httplib
+import urllib
+
 import RPi.GPIO as GPIO
 
 script_path = os.path.dirname(os.path.realpath(__file__))
@@ -89,7 +93,18 @@ def teardown():
   GPIO.cleanup()
 
 def send_trigger_message():
-  print "send_trigger_message"
+  print "send trigger message"
+  msg = '{"channel":"/trigger","data":{}}'
+
+  params = urllib.urlencode({'@number': 12524, '@type': 'issue', '@action': 'show'})
+  headers = { "Content-type": "application/json" }
+  conn = httplib.HTTPConnection(host, port)
+  conn.request("POST", "/faye", msg, headers)
+  response = conn.getresponse()
+  print response.status, response.reason
+  data = response.read()
+  print data
+  conn.close()
 
 def handleSigTERM():
   teardown()
