@@ -109,7 +109,7 @@ app.get('/image/:name', function (req, res) {
   if (file && file.path && file.mimetype) {
     fs.readFile(file.path, function (err, contents) {
       if (err) {
-        console.err(err);
+        console.error(err);
         res.status(err).sendStatus(500);
       } else {
         res.set('Content-Type', file.mimetype).send(contents);
