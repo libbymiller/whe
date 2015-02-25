@@ -5,7 +5,8 @@
   },
   "trigger": {
     "triggerPin": 16,
-    "echoPin": 18
+    "echoPin": 18,
+    "distanceThresholdCm": 10
   },
   "heartbeatIntervalSecs": 1
 }

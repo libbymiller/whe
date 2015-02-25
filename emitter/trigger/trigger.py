@@ -16,6 +16,8 @@ port = config['collector']['port']
 trigger_pin = config['trigger']['triggerPin']
 echo_pin = config['trigger']['echoPin']
 
+distance_threshold_cm = config['trigger']['distanceThresholdCm']
+
 def setup():
   GPIO.setmode(GPIO.BOARD)
 
@@ -86,6 +88,9 @@ def teardown():
   print 'clean up GPIO...'
   GPIO.cleanup()
 
+def send_trigger_message():
+  print "send_trigger_message"
+
 def handleSigTERM():
   teardown()
   print '...exit'
@@ -96,8 +101,20 @@ signal.signal(signal.SIGTERM, handleSigTERM)
 
 setup()
 
+has_triggered = False
+
 while True:
   distance = read()
   print distance
+  if distance < distance_threshold_cm:
+    print "Within distance threshold"
+    if has_triggered == False:
+      print "Triggering"
+      send_trigger_message()
+      has_triggered = True
+  else:
+    print "Outside of distance threshold...reset"
+    has_triggered = False
+
   time.sleep(0.5)
 
