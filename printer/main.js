@@ -110,6 +110,7 @@ function imageToAscii(obj) {
 				} else {
 					obj.ascii = stdout;
 				}
+				fs.unlink(obj.imagePath);
 				resolve(obj);
 			});
 		} else {
