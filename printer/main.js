@@ -19,46 +19,94 @@ var client = new faye.Client('http://' + config.collector.host + ':' + config.co
 client.subscribe('/render', handle);
 
 
-function msgContents(msg) {
-	return new Promise(function (resolve, reject) {
-		// var fileName = 'data-' + Date.now();
-		// var filepath = path.resolve('./data/' + fileName);
-		// image(msg);
-		var output =  JSON.stringify(msg, undefined, 2);
-		// console.log(filepath);
-		console.log(output);
-		resolve(output);
-		// fs.writeFileSync(filepath,output);
-	    // sendPrint(filepath)
-	});
+function handle(msg) {
+	try {
+		console.log('msg', typeof msg,  msg);
+		var msg = msg[0];
+
+		// var msgPromise = fetchState();
+		// var asciiImagePromise = fetchImageUrl(msg)
+		// 						.then(saveImage)
+		// 						.then(imageToAscii)
+		// 						.catch(failure);
+
+		var msgPromise = fetchState()
+				        .then(fetchImage)
+								.then(saveImage)
+								.then(imageToAscii)
+								.then(writeFile)
+								.then(printFile)
+								.catch(failure);
+
+	    // Promise.all([msgPromise, asciiImagePromise])
+	    // 		.then(writeFile)
+	    // 		.then(printFile)
+	    // 		.catch(failure);
+	} catch(e) {
+		console.error(e.stack);
+	}
+
 }
 
-function fetchImageUrl(msg) {
+/*
+	Fetch contents of <collector>/state and parse as JSON
+*/
+function fetchState() {
 	return new Promise(function (resolve, reject) {
-                var url = 'http://' + config.collector.host + ':' + config.collector.port + '/state';
+	  var url = 'http://' + config.collector.host + ':' + config.collector.port + '/state';
 		var body = '';
-		console.log('url', url);
+		console.log('Fetch state at url', url);
 		http.get(url, function (res) {
-                  res.on('data', function (chunk) {
-                    body += chunk;
-                  });
+      res.on('data', function (chunk) {
+        body += chunk;
+      });
 
-                  res.on('end', function () {
+      res.on('error', function (err) {
+        reject(err);
+      });
+
+      res.on('end', function () {
 		    try {
 		      var data = JSON.parse(body);
 		      resolve(data);
-		    } catch (e) {
-   		      reject(e);
-   		    }
+		    } catch (err) {
+ 		      reject(err);
+ 		    }
 		  });
-		});
+	});
+}
+
+// function writeMsgContents(msg) {
+// 	return new Promise(function (resolve, reject) {
+// 		var fileName = 'data-' + Date.now();
+// 		var filepath = path.resolve('./data/' + fileName);
+
+// 		var output =  JSON.stringify(msg, undefined, 2);
+// 		console.log('Wriing data to ', filepath);
+// 		fs.writeFileSync(filepath,output);
+// 		resolve(output);
+// 	});
+// }
+
+function fetchImage(msg) {
+	return new Promise(function (resolve, reject) {
+		var image = msg.images ? msg.images[0] : null;
+		if (image && image.files && image.files[0]) {
+			var imagePath = image.files[0].name;
+			var url = image.files[0].url;
+			console.log('Fetching image url', url);
+			console.log('Image path', imagePath);
+			http.get(url, function (res) {
+				resolve({ msg: msg, res: res, imagePath: imagePath });
+			});
+		}
 	});
 }
 
 function saveImage(obj) {
 	return new Promise(function (resolve, reject) {
-                //console.log(obj);
-		var filepath = obj.images[0].url;
+		console.log('Save image to path', filepath);
+		var filepath = obj.imagePath;
 		var f = fs.createWriteStream(filepath);
 		obj.res.on('data', function (chunk) {
 			f.write(chunk);
@@ -94,35 +142,11 @@ function failure(e) {
 	console.error('failuer', e.stack);
 }
 
-function handle(msg) {
-
-	try {
-		console.log('msg', typeof msg,  msg);
-		var msg = msg[0];
-
-		var msgPromise = msgContents(msg);
-		var asciiImagePromise = fetchImageUrl(msg)
-								.then(saveImage)
-								.then(imageToAscii)
-								.catch(failure);
-
-	    Promise.all([msgPromise, asciiImagePromise])
-	    		.then(writeFile)
-	    		.then(printFile)
-	    		.catch(failure);		
-	} catch(e) {
-		console.error(e.stack);
-	}
-
-}
-
-
 function printFile(obj) {
 	console.log('print', arguments);
 	console.log('printing', obj.printFile)
-//	exec(print, [obj.printFile]);
-        var cmnd = "sudo chown pi:pi /dev/usb/lp0; cat "+obj.printFile+"  >  /dev/usb/lp0";
-        console.log("command is "+cmnd);
+  var cmnd = "sudo chown pi:pi /dev/usb/lp0; echo '"+obj.printFile+"'  >  /dev/usb/lp0";
+  // var cmnd = "sudo chown pi:pi /dev/usb/lp0; cat "+obj.printFile+"  >  /dev/usb/lp0";
 	exec(cmnd);
 }
 
@@ -132,12 +156,13 @@ function writeFile(params) {
 
 	var header = 'MOZFEST 2014\n*** YOUR SOUVENIR FROM THE ETHICAL DILEMMA CAFE ****\n\n';
 
-	console.log('write file', arguments);
+	console.log('Construct file');
 	return new Promise(function (resolve, reject) {
-		var fileName = 'data-' + Date.now() + '.txt';
-		var filepath = path.resolve('./data/' + fileName);
-		fs.writeFileSync(filepath, header + contents + '\n\n\n\n' + obj.ascii);
-		obj.printFile = filepath;
-	    resolve(obj);
+		// var fileName = 'data-' + Date.now() + '.txt';
+		// var filepath = path.resolve('./data/' + fileName);
+		// fs.writeFileSync(filepath, header + contents + '\n\n\n\n' + obj.ascii);
+		// obj.printFile = filepath;
+		obj.printFile = header + contents + '\n\n\n\n' + obj.ascii;
+	  resolve(obj);
 	});
 }
