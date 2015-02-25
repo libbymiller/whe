@@ -1,2 +1,3 @@
-sender: node ./sender/sender.js
-snapper: snapper/start.sh
+sender: node ./sender/imageSender.js
+snapper: ./snapper/camcv_vid3
+sniffer: ./sniffer/start.sh
