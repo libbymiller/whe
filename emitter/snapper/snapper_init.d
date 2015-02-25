@@ -23,7 +23,7 @@ export PATH="${PATH:+$PATH:}/usr/sbin:/sbin"
 case "$1" in
   start)
     echo -n "Starting: "$NAME
-    start-stop-daemon  --start --quiet --background --no-close --make-pidfile --pidfile $PIDFILE -d /home/pi/whe/emitter --exec ./snapper/camcv_vid3 > /var/log/$NAME_start.log 2>&1
+    start-stop-daemon  --start --quiet --background --no-close --make-pidfile --pidfile $PIDFILE -d /home/pi/whe/emitter --exec ./snapper/camcv_vid3 > /var/log/${NAME}_start.log 2>&1
     echo "."
     ;;
   stop)
