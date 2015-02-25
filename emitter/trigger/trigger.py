@@ -17,6 +17,8 @@ trigger_pin = config['trigger']['triggerPin']
 echo_pin = config['trigger']['echoPin']
 
 def setup():
+  GPIO.setmode(GPIO.BOARD)
+
   GPIO.setwarnings(False)
 
   # point the software to the GPIO pins the sensor is using
