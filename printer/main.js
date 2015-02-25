@@ -1,4 +1,4 @@
-// based on and largely the same as  
+// based on and largely the same as
 // https://gist.githubusercontent.com/andrewn/294d9483f5bd2ef11055/raw/4022ecd31e55722b1d9d013d4cec51180232b0d1/main.js
 // but for pi instead of windows
 
@@ -15,6 +15,7 @@ var Promise = require('es6-promise').Promise;
 var http = require('http');
 var client = new faye.Client('http://' + config.collector.host + ':' + config.collector.port + '/faye');
 
+var outputDir = config.printer.outputDir;
 
 client.subscribe('/render', handle);
 
@@ -24,12 +25,6 @@ function handle(msg) {
 		console.log('msg', typeof msg,  msg);
 		var msg = msg[0];
 
-		// var msgPromise = fetchState();
-		// var asciiImagePromise = fetchImageUrl(msg)
-		// 						.then(saveImage)
-		// 						.then(imageToAscii)
-		// 						.catch(failure);
-
 		var msgPromise = fetchState()
 				        .then(fetchImage)
 								.then(saveImage)
@@ -38,10 +33,6 @@ function handle(msg) {
 								.then(printFile)
 								.catch(failure);
 
-	    // Promise.all([msgPromise, asciiImagePromise])
-	    // 		.then(writeFile)
-	    // 		.then(printFile)
-	    // 		.catch(failure);
 	} catch(e) {
 		console.error(e.stack);
 	}
@@ -81,7 +72,7 @@ function fetchImage(msg) {
 	return new Promise(function (resolve, reject) {
 		var image = msg.images ? msg.images[0] : null;
 		if (image && image.files && image.files[0]) {
-			var imagePath = image.files[0].name;
+			var imagePath = outputDir + '/' + image.files[0].name;
 			var url = image.files[0].url;
 			console.log('Fetching image url', url);
 			console.log('Image path', imagePath);

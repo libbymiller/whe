@@ -8,5 +8,8 @@
     "echoPin": 18,
     "distanceThresholdCm": 10
   },
+  "printer": {
+    "outputDir": "/tmp"
+  },
   "heartbeatIntervalSecs": 1
 }
