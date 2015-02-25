@@ -8,7 +8,10 @@ var configPath = path.join(__dirname, '..', '..', 'shared', 'config.json'),
     config = require(configPath),
     client = new faye.Client( fayeUrl(config.collector) );
 
+var dataFilename = '../sniffer/data.json';
+
 client.subscribe('/trigger', handleTrigger);
+console.log("listening to "+fayeUrl(config.collector) );
 
 // Send a heartbeat every few secs (defined in config)
 setInterval(heartbeat, config.heartbeatIntervalSecs * 1000);
@@ -23,11 +26,8 @@ function fayeUrl(url) {
 }
 
 function handleTrigger() {
-  var dataFilename = '../data.json';
   console.log('Trigger message received');
    try {
-      console.log('faye: got message', typeof msg,  msg);
-      console.log(msg.trigger);
       // load file from the expected place if it's not too old
       console.log('looking for creation time of '+path.join(__dirname, dataFilename));
       fs.stat(path.join(__dirname, dataFilename), fsDateCallback);
@@ -81,3 +81,12 @@ function sendData(fdata){
    req.write(fdata);
    req.end();
 }
+
+function requestCallback(err, res, body) {
+   if(err){
+      console.log("error");
+   }
+   console.log("ok");
+   console.log(body);
+}
+
