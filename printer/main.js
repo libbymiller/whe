@@ -36,9 +36,21 @@ function msgContents(msg) {
 function fetchImageUrl(msg) {
 	return new Promise(function (resolve, reject) {
                 var url = 'http://' + config.collector.host + ':' + config.collector.port + '/state';
+		var body = '';
 		console.log('url', url);
 		http.get(url, function (res) {
-			resolve(res);
+                  res.on('data', function (chunk) {
+                    body += chunk;
+                  });
+
+                  res.on('end', function () {
+		    try {
+		      var data = JSON.parse(body);
+		      resolve(data);
+		    } catch (e) {
+   		      reject(e);
+   		    }
+		  });
 		});
 	});
 }
