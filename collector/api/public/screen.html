@@ -45,21 +45,25 @@
   {{/images}}
   </script>
   <script>
-    var client = new Faye.Client('http://localhost:3000/faye');
-    var ractive = new Ractive({
-      el: '#ui',
-      template: '#ui-template'
-    });
+    $.get('/config').then(initWithConfig);
 
-    client.subscribe('/render', handleRender);
+    function initWithConfig(config) {
+      var client = new Faye.Client('http://' + config.collector.host + ':' + config.collector.port + '/faye');
+      var ractive = new Ractive({
+        el: '#ui',
+        template: '#ui-template'
+      });
 
-    function handleRender(data) {
-      console.log('RENDER', data);
-      $.get('/state')
-       .then(function (data) {
-          console.log('data', data);
-          ractive.set(data);
-        });
+      client.subscribe('/render', handleRender);
+
+      function handleRender(data) {
+        console.log('RENDER', data);
+        $.get('/state')
+         .then(function (data) {
+            console.log('data', data);
+            ractive.set(data);
+          });
+      }
     }
 
   </script>

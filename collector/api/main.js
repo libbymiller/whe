@@ -6,13 +6,14 @@ var http    = require('http'),
     _       = require('lodash');
 
 var Metadata = require('./lib/metadata'),
-    Images   = require('./lib/images');
+    Images   = require('./lib/images'),
+    config   = require('../../shared/config');
 
 var port = process.env.PORT;
 
 var app = express(),
     bayeux = new faye.NodeAdapter({mount: '/faye'}),
-    client = new faye.Client('http://localhost:' + port + '/faye'),
+    client = new faye.Client('http://' + config.collector.host + ':' + port + '/faye'),
     server = http.createServer(app),
     metadata = new Metadata(),
     images = new Images();
@@ -64,6 +65,10 @@ app.set('view engine', 'html');
 */
 app.get('/', function (req, res) {
   res.render('index');
+});
+
+app.get('/config', function (req, res) {
+  res.json(config);
 });
 
 app.get('/status', function (req, res) {
