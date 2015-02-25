@@ -73,20 +73,9 @@ function fetchState() {
  		      reject(err);
  		    }
 		  });
+    });
 	});
 }
-
-// function writeMsgContents(msg) {
-// 	return new Promise(function (resolve, reject) {
-// 		var fileName = 'data-' + Date.now();
-// 		var filepath = path.resolve('./data/' + fileName);
-
-// 		var output =  JSON.stringify(msg, undefined, 2);
-// 		console.log('Wriing data to ', filepath);
-// 		fs.writeFileSync(filepath,output);
-// 		resolve(output);
-// 	});
-// }
 
 function fetchImage(msg) {
 	return new Promise(function (resolve, reject) {
