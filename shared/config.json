@@ -4,8 +4,8 @@
     "port": 3000
   },
   "trigger": {
-    "triggerPin": 17,
-    "echoPin": 27
+    "triggerPin": 16,
+    "echoPin": 18
   },
   "heartbeatIntervalSecs": 1
 }

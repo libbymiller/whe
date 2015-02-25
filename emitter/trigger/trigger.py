@@ -99,5 +99,5 @@ setup()
 while True:
   distance = read()
   print distance
-  sleep(5)
+  time.sleep(0.5)
 
