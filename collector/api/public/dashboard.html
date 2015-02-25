@@ -15,7 +15,8 @@
   <button onclick="postMetadata('moz1')">POST /metadata (moz1)</button>
   <button onclick="postMetadata('moz2')">POST /metadata (moz2)</button>
   <script>
-    var config = $.get('/config').then(initWithConfig);
+    var config = $.get('/config').then(initWithConfig),
+        trigger;
 
     function initWithConfig(config) {
       var client = new Faye.Client('http://' + config.collector.host + ':' + config.collector.port + '/faye');
@@ -25,7 +26,7 @@
         console.log('Heartbeat: type: %o, id: %o', thing.type, thing.id);
       });
 
-      function trigger() {
+      trigger = function () {
         client.publish('/trigger', {})
           .then(success, fail);
       }
