@@ -121,8 +121,10 @@ app.get('/image/:name', function (req, res) {
 });
 
 app.post('/image', function (req, res) {
+  var files = _.toArray(req.files).map(function (f) { f.url = 'http://' + config.collector.host + ':' + config.collector.port + '/image/' + f.name; return f });
   if (req.body) {
-    req.body.files = _.toArray(req.files);
+    req.body.files = files;
+    console.log('body', req.body);
     images.replace(req.body);
   } else {
     console.warn('No body for image POST');
