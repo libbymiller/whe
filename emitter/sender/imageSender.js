@@ -4,6 +4,8 @@ var faye = require('faye')
     fs = require('fs'),
     request = require('request');
 
+var source="snapper1";//fixme@@
+
 var configPath = path.join(__dirname, '..', '..', 'shared', 'config.json'),
     config = require(configPath),
     client = new faye.Client( fayeUrl(config.collector) );
@@ -70,6 +72,7 @@ function sendImage(filename){
    var r = request.post('http://'+config.collector.host+':'+config.collector.port+'/image', requestCallback);
    var form = r.form()
    form.append("folder_id", "0");
+   form.append("source", source);
    console.log("uploading "+path.join(__dirname, filename)+" to "+config.collector.host+":"+config.collector.port+"/image");
    form.append("name", fs.createReadStream(path.join(__dirname, filename)));
 }
