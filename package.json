@@ -23,6 +23,7 @@
     "ampersand-collection": "~1.4.0",
     "multer": "~0.1.7",
     "lodash": "~3.2.0",
-    "request": "~2.53.0"
+    "request": "~2.53.0",
+    "es6-promise": "~2.0.1"
   }
 }

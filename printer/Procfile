@@ -1,0 +1,2 @@
+printer: node main.js
+#permissions: ./permissions.sh

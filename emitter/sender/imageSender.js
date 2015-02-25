@@ -2,7 +2,12 @@ var faye = require('faye')
     path = require('path'),
     http = require('http'),
     fs = require('fs'),
-    request = require('request');
+    request = require('request'),
+    os = require("os");
+
+var source = os.hostname();
+
+console.log("source is "+source);
 
 var configPath = path.join(__dirname, '..', '..', 'shared', 'config.json'),
     config = require(configPath),
@@ -70,6 +75,7 @@ function sendImage(filename){
    var r = request.post('http://'+config.collector.host+':'+config.collector.port+'/image', requestCallback);
    var form = r.form()
    form.append("folder_id", "0");
+   form.append("source", source);
    console.log("uploading "+path.join(__dirname, filename)+" to "+config.collector.host+":"+config.collector.port+"/image");
    form.append("name", fs.createReadStream(path.join(__dirname, filename)));
 }
