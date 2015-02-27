@@ -3,10 +3,12 @@ var http    = require('http'),
     faye    = require('faye'),
     fs      = require('fs'),
     multer  = require('multer'),
-    _       = require('lodash');
+    _       = require('lodash'),
+    Promise = require('es6-promise').Promise;
 
 var Metadata = require('./lib/metadata'),
     Images   = require('./lib/images'),
+    MacAddressLookup = require('../macs/main')(),
     config   = require('../../shared/config');
 
 var port = process.env.PORT;
@@ -93,9 +95,26 @@ app.get('/state', function (req, res) {
 
 // Wifi data from emitters
 app.post('/metadata', function (req, res) {
+  var data;
   if (req.body && req.body.data) {
-    console.log('Received metadata', req.body.data);
-    metadata.replace(req.body.data);
+    data = req.body.data;
+
+    console.log('Received metadata', data);
+
+    // We get an array of wifi metadata
+    // perform a lookup on each one
+    promises = data.map(performMacAddressLookup);
+
+    // When the lookups are finished, we get an array
+    // of data back
+    Promise.all(promises)
+      .then(function(data) {
+        metadata.replace(data);
+      })
+      .catch(function (err) {
+        console.error('Error performing lookups', err);
+      });
+
   } else {
     console.error('No metadata in POST body', req.body);
   }
@@ -164,3 +183,30 @@ server.listen(port, function () {
 
   console.log('Collector API listening at http://%s:%s', host, port);
 });
+
+// Given a single data object containing `id`
+// which is a MAC address peform a lookup to
+// resolve the manufacturer name.
+// Resolves: the object passed in, augmented with
+//           'shortName' and optionally 'name'
+//           property
+function performMacAddressLookup(data) {
+  return new Promise(function (resolve, reject) {
+    if (data.id) {
+      MacAddressLookup
+        .find(data.id)
+        .then(function (info) {
+          console.log('Found info: ', info);
+          if (info && info.shortName) {
+            data.shortName = info.shortName;
+            data.name = info.name;
+            resolve(data);
+          } else {
+            console.error('No MAC address info found for', data);
+          }
+        });
+    } else {
+      resolve(data);
+    }
+  });
+}

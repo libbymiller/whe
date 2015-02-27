@@ -18,5 +18,6 @@ module.exports = function () {
 function normalise(str) {
   return str.replace(/-/g, '')
             .replace(/:/g, '')
+            .substring(0, 6)
             .toUpperCase();
 }
