@@ -16,7 +16,12 @@ var http = require('http');
 
 var outputDir = config.printer.outputDir,
 	  clientUrl = 'http://' + config.collector.host + ':' + config.collector.port + '/faye',
-	  printer   = config.printer.devicePath || '/dev/usb/lp0';
+	  printer   = config.printer.devicePath || '/dev/usb/lp0',
+		noPrintTimeoutSecs = config.printer.noPrintTimeoutSecs;
+
+if (!noPrintTimeoutSecs) {
+	console.warn('config.printer.noPrintTimeoutSecs not specified');
+}
 
 console.log('Faye client URL', clientUrl);
 
@@ -42,21 +47,29 @@ if (!outputDir) {
 
 client.subscribe('/render', handle);
 
+var isPrinting = false;
+
 function handle(msg) {
-	console.log('/render received. msg: ', msg);
+	console.log('------------------------');
+	console.log('/render message received, msg: ', msg);
 	try {
+
+		if (isPrinting === true) {
+			console.log('Already printing, abort!');
+			return;
+		}
+
 		var msgPromise = fetchState()
 				        .then(fetchImage)
 								.then(saveImage)
 								.then(imageToAscii)
 								.then(writeFile)
 								.then(printFile)
+								.then(startPrintTimeout)
 								.catch(failure);
-
 	} catch(e) {
 		console.error(e.stack);
 	}
-
 }
 
 /*
@@ -99,6 +112,9 @@ function fetchImage(msg) {
 			console.log('Fetching image url', url);
 			console.log('Image path', imagePath);
 			http.get(url, function (res) {
+				res.on('error', function (err) {
+	        reject(err);
+	      });
 				resolve({ msg: msg, res: res, imagePath: imagePath });
 			});
 		} else {
@@ -144,10 +160,9 @@ function imageToAscii(obj) {
 function writeFile(params) {
 	var contents = JSON.stringify(params.msg.metadata),
 		obj = params;
-
 	var header = 'MOZFEST 2014\n*** YOUR SOUVENIR FROM THE ETHICAL DILEMMA CAFE ****\n\n';
 
-	console.log('Construct file', params);
+	console.log('Construct print file');
 	return new Promise(function (resolve, reject) {
 		obj.printFile = header + contents + '\n\n\n\n' + obj.ascii;
 	  resolve(obj);
@@ -159,6 +174,26 @@ function printFile(obj) {
   var escapedOutput = obj.printFile.replace(/\'/g, "'\\''");
   var cmnd = "sudo chown pi:pi " + printer + "; echo $'" + escapedOutput + "'  >  " + printer;
 	exec(cmnd);
+	// Pass through parameters
+	return Promise.resolve(obj);
+}
+
+/*
+	Sets the global variable `isPrinting`
+	to true and after waiting `printTimeoutSecs`
+	seconds, sets it to false again
+*/
+function startPrintTimeout(params) {
+	console.log('Start print timeout');
+	setTimeout(function () {
+		isPrinting = false;
+	}, noPrintTimeoutSecs ? (noPrintTimeoutSecs * 1000) : 0);
+
+	isPrinting = true;
+
+	// Just passes through a resolved promise
+	// with the same arguments
+	return Promise.resolve(params);
 }
 
 function failure(e) {
