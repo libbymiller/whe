@@ -8,7 +8,7 @@ var configPath = path.join(__dirname, '..', '..', 'shared', 'config.json'),
     config = require(configPath),
     client = new faye.Client( fayeUrl(config.collector) );
 
-var dataFilename = '../sniffer/data.json';
+var dataFilename = '/home/pi/whe/emitter/sniffer/data.json';
 
 client.subscribe('/trigger', handleTrigger);
 console.log("listening to "+fayeUrl(config.collector) );
@@ -30,7 +30,7 @@ function handleTrigger() {
    try {
       // load file from the expected place if it's not too old
       console.log('looking for creation time of '+path.join(__dirname, dataFilename));
-      fs.stat(path.join(__dirname, dataFilename), fsDateCallback);
+      fs.stat(dataFilename, fsDateCallback);
    } catch(e) {
       console.log("problem");
       console.error(e.stack);
@@ -50,7 +50,7 @@ function fsDateCallback(err, data){
      console.log('startDate '+startDate+' endDate '+endDate+' diff '+diff/1000+' threshold '+threshold+' secs');
      if(diff < threshold){
        console.log('metadata data age is ok, sending');
-       fs.readFile(path.join(__dirname, dataFilename), 'utf8', function (err,fdata) {
+       fs.readFile(dataFilename, 'utf8', function (err,fdata) {
          if (err) {
            return console.log(err);
          }
