@@ -5,26 +5,131 @@
 
   <link rel="stylesheet" type="text/css" href="/css/normalize.css">
   <link rel="stylesheet" type="text/css" href="/css/skeleton.css">
+  <link rel="stylesheet" type="text/css" href="/css/dashboard.css">
 
   <script src="/faye/client.js"></script>
   <script src="/js/jquery.js"></script>
+  <script src="/js/ractive.js"></script>
+  <script src="/js/moment.js"></script>
 </head>
 <body>
-  <h1>Dashboard</h1>
-  <button onclick="trigger()" class="button-primary">Trigger</button>
-  <button onclick="postMetadata('moz1')">POST /metadata (moz1)</button>
-  <button onclick="postMetadata('moz2')">POST /metadata (moz2)</button>
+  <div class="container">
+    <h1>Dashboard</h1>
+    <div id="heartbeats"></div>
+
+    <div class="row">
+      <h2>Triggers</h2>
+      <button onclick="trigger()" class="button-primary">Trigger</button>
+      <button onclick="postMetadata('moz1')">POST /metadata (moz1)</button>
+      <button onclick="postMetadata('moz2')">POST /metadata (moz2)</button>
+    </div> <!-- .row -->
+  </div>
+
+<script id="heartbeats-template" type="text/ractive">
+<div class="row">
+  <div class="one-half column">
+    <h2>Status</h2>
+    <table>
+      <tr>
+        <th>Id</th>
+        <th>Type</th>
+        <th>Last seen</th>
+      </tr>
+    {{#heartbeats:index}}
+      <tr>
+        <td>{{id}}</td>
+        <td>{{type}}</td>
+        <td>{{fromNow(time, now)}}</td>
+      </tr>
+    {{else}}
+      <tr>
+        <td colspan=3>Nothing</td>
+      </tr>
+    {{/heartbeats}}
+    </table>
+  </div><!-- .column -->
+
+  <div class="one-half column">
+    <h2>Errors</h2>
+    <table>
+      <tr>
+        <th>Time</th>
+        <th>Message</th>
+        <th>Data</th>
+      </tr>
+    {{#errors}}
+      <tr>
+        <td>{{time}}</td>
+        <td>{{msg}}</td>
+        <td>{{obj}}</td>
+      </tr>
+    {{else}}
+      <tr>
+        <td colspan=3>No errors</td>
+      </tr>
+    {{/errors}}
+    </table>
+  </div><!-- .column -->
+</div><!-- .row -->
+</script>
+
   <script>
     var config = $.get('/config').then(initWithConfig),
+        heartbeatsUi,
         trigger,
         postMetadata;
 
+    // Common moment.js helpers
+    var helpers = Ractive.defaults.data;
+    helpers.from = function(timeString, now){
+        return moment(timeString).from(now, true);
+    }
+    helpers.fromNow = function(timeString){
+        return moment(timeString).fromNow();
+    }
+    helpers.formatTime = function(timeString){
+        return moment(timeString).format("ddd, h:mmA");
+    }
+    helpers.humanizeTime = function(timeString){
+        return moment.duration(timeString).humanize();
+    }
+
     function initWithConfig(config) {
-      var client = new Faye.Client('http://' + config.collector.host + ':' + config.collector.port + '/faye');
+      var client = new Faye.Client('http://' + config.collector.host + ':' + config.collector.port + '/faye'),
+          errors = [];
+
+      heartbeatsUi = new Ractive({
+        el: '#heartbeats',
+        template: '#heartbeats-template',
+        data: {
+          heartbeats: {},
+          errors: errors,
+          now: new Date()
+        }
+      });
+
+      setInterval(function () {
+        console.log('update');
+        heartbeatsUi.set('now', new Date());
+      }, 1000);
 
       // Display heartbeats of all clients
       client.subscribe('/heartbeat', function (thing) {
-        console.log('Heartbeat: type: %o, id: %o', thing.type, thing.id);
+        console.log('/heartbeat', thing);
+        if (thing && thing.id) {
+          var keypath = 'heartbeats.' + thing.id;
+          console.log('set keypath', keypath);
+          thing.time = new Date();
+          heartbeatsUi.set(keypath, thing);
+        } else {
+          errors.push({
+            msg: 'Item without id ',
+            obj: thing, time:
+            new Date()
+          });
+        }
+
+        console.log( heartbeatsUi.get('heartbeats') );
       });
 
       trigger = function () {
