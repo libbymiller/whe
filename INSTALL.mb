@@ -1,0 +1,245 @@
+Collector
+--
+
+provision a card:
+
+    diskutil list
+    diskutil unmountDisk /dev/diskn
+    sudo dd bs=1m if=~/Downloads/2015-01-31-raspbian.img of=/dev/diskn
+
+then
+
+    sudo raspi-config
+    expand file system
+
+reboot
+
+    sudo apt-get update && sudo apt-get upgrade -y
+
+install avahi and node
+
+    git clone https://github.com/radiodan/provision
+    cd provision
+    sudo ./provision avahi node
+
+change its name to "collector"
+
+    sudo pico /etc/hosts
+    sudo pico /etc/hostname
+
+    sudo gem install foreman --no-ri --no-rdoc
+
+install whe
+
+    cd
+    git clone https://github.com/libbymiller/whe
+    cd whe
+    npm install
+
+try it
+
+    foreman start -p 3000 -f collector/Procfile
+
+stop it
+    
+install init.d files
+
+    sudo cp collector/collector_init.d /etc/init.d/collector
+    sudo chmod a+x /etc/init.d/collector
+
+    sudo update-rc.d collector defaults
+    sudo update-rc.d collector enable
+
+
+---
+
+Snapper
+--
+
+provision a card:
+
+    diskutil list
+    diskutil unmountDisk /dev/diskn
+    sudo dd bs=1m if=~/Downloads/2015-01-31-raspbian.img of=/dev/diskn
+
+
+    sudo raspi-config
+    expand file system
+
+reboot
+
+    sudo apt-get remove --purge wolfram-engine
+    sudo apt-get update && sudo apt-get upgrade -y
+
+
+install avahi and node
+
+    git clone https://github.com/radiodan/provision
+    cd provision
+    sudo ./provision avahi node
+
+change its name to "snapper1"
+
+    sudo pico /etc/hosts
+    sudo pico /etc/hostname
+
+install foreman in case you want to test it locally
+
+    sudo gem install foreman --no-ri --no-rdoc
+
+install whe
+
+    git clone https://github.com/libbymiller/whe
+    cd whe
+    npm install
+
+
+    sudo apt-get install libopencv-dev python-opencv
+
+    cd
+    cd whe/emitter
+
+test it if you like
+
+    foreman start
+
+kill it
+
+install init.d files
+
+    sudo cp emitter/snapper/snapper_init.d /etc/init.d/snapper
+    sudo chmod a+x /etc/init.d/snapper
+
+    sudo update-rc.d snapper defaults
+    sudo update-rc.d snapper enable
+
+    sudo cp emitter/sender/image_sender_init.d /etc/init.d/image-sender
+
+    sudo chmod a+x /etc/init.d/image-sender
+
+    sudo update-rc.d image-sender defaults
+    sudo update-rc.d image-sender enable
+
+
+
+----
+
+sniffer
+--
+
+provision a card:
+
+    diskutil list
+    diskutil unmountDisk /dev/diskn
+    sudo dd bs=1m if=~/Downloads/2015-01-31-raspbian.img of=/dev/diskn
+
+    sudo raspi-config
+
+expand file system
+
+reboot
+
+    sudo apt-get remove --purge wolfram-engine
+    sudo apt-get update && sudo apt-get upgrade -y
+
+install avahi and node
+	
+    git clone https://github.com/radiodan/provision
+    cd provision
+    sudo ./provision avahi node
+
+change its name to "sniffer"
+
+    sudo pico /etc/hosts
+    sudo pico /etc/hostname
+
+    sudo gem install foreman --no-ri --no-rdoc
+
+    cd
+    git clone https://github.com/libbymiller/whe
+    cd whe
+    npm install
+
+install prerequisites
+
+    sudo apt-get install libnl-dev libssl-dev iw avahi-daemon ntpdate
+
+install airodump-ng
+
+    wget http://download.aircrack-ng.org/aircrack-ng-1.2-beta3.tar.gz
+    tar -zxvf aircrack-ng-1.2-beta3.tar.gz
+    cd aircrack-ng-1.2-beta3
+    make
+    sudo make install
+
+add to init.d
+
+    sudo cp emitter/sniffer/sniffer_init.d /etc/init.d/sniffer
+    sudo chmod 755 /etc/init.d/sniffer
+    sudo chown root:root /etc/init.d/sniffer
+
+    sudo update-rc.d sniffer defaults
+    sudo update-rc.d sniffer enable
+
+    sudo cp emitter/sender/metadata_sender_init.d /etc/init.d/metadata-sender
+
+    sudo chmod a+x /etc/init.d/metadata-sender
+
+    sudo update-rc.d metadata-sender defaults
+    sudo update-rc.d metadata-sender enable
+
+----
+
+Trigger
+--
+
+provision a card:
+
+    diskutil list
+    diskutil unmountDisk /dev/diskn
+    sudo dd bs=1m if=~/Downloads/2015-01-31-raspbian.img of=/dev/diskn
+
+
+    sudo raspi-config
+expand file system
+
+reboot
+
+    sudo apt-get update && sudo apt-get upgrade -y
+
+change its name to "trigger"
+
+    sudo pico /etc/hosts
+    sudo pico /etc/hostname
+
+install whe
+
+    git clone https://github.com/libbymiller/whe
+    cd whe
+
+fix init.d
+
+    sudo cp emitter/trigger/trigger_init.d /etc/init.d/trigger
+    sudo chmod 755 /etc/init.d/trigger
+    sudo chown root:root /etc/init.d/trigger
+
+    sudo update-rc.d trigger defaults
+    sudo update-rc.d trigger enable
+
+
+Snapper init.d
+
+    sudo cp ./snapper/snapper_init.d /etc/init.d/snapper
+
+    sudo chmod a+x /etc/init.d/snapper
+
+    sudo update-rc.d snapper defaults
+    sudo update-rc.d snapper enable
+
+    sudo cp sender/image_sender_init.d /etc/init.d/sender
+
+    sudo chmod a+x /etc/init.d/sender
+
+    sudo update-rc.d sender defaults
+    sudo update-rc.d sender enable
+
