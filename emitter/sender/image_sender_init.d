@@ -1,12 +1,12 @@
 #!/bin/sh
 ### BEGIN INIT INFO
-# Provides:          sender
+# Provides:          image-sender
 # Required-Start:    $remote_fs $syslog
 # Required-Stop:     $remote_fs $syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: Wifi sender
-# Description:       Uses Airmon and Airodump to track wifi mac addresses
+# Short-Description: Image sender
+# Description:       Sends images to the collector
 ### END INIT INFO
 # Quick start-stop-daemon example, derived from Debian /etc/init.d/ssh
 set -e
