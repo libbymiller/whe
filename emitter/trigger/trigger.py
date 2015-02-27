@@ -90,10 +90,12 @@ def read():
 
 def teardown():
   print 'clean up GPIO...'
+  sys.stdout.flush()
   GPIO.cleanup()
 
 def send_trigger_message():
   print "send trigger message"
+  sys.stdout.flush()
   msg = '{"channel":"/trigger","data":{}}'
 
   params = urllib.urlencode({'@number': 12524, '@type': 'issue', '@action': 'show'})
@@ -102,13 +104,16 @@ def send_trigger_message():
   conn.request("POST", "/faye", msg, headers)
   response = conn.getresponse()
   print response.status, response.reason
+  sys.stdout.flush()
   data = response.read()
   print data
+  sys.stdout.flush()
   conn.close()
 
 def handleSigTERM():
   teardown()
   print '...exit'
+  sys.stdout.flush()
   sys.exit()
 
 
@@ -121,14 +126,18 @@ has_triggered = False
 while True:
   distance = read()
   print distance
+  sys.stdout.flush()
   if distance < distance_threshold_cm:
     print "Within distance threshold"
+    sys.stdout.flush()
     if has_triggered == False:
       print "Triggering"
+      sys.stdout.flush()
       send_trigger_message()
       has_triggered = True
   else:
     print "Outside of distance threshold...reset"
+    sys.stdout.flush()
     has_triggered = False
 
   time.sleep(0.5)
