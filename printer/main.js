@@ -45,6 +45,14 @@ if (!outputDir) {
   process.exit();
 }
 
+// Send a heartbeat every few secs (defined in config)
+setInterval(heartbeat, config.heartbeatIntervalSecs * 1000);
+
+function heartbeat() {
+  client.publish('/heartbeat', { id: '1', type: 'printer' });
+}
+
+
 client.subscribe('/render', handle);
 
 var isPrinting = false;
