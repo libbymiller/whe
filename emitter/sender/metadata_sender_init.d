@@ -23,7 +23,7 @@ export PATH="${PATH:+$PATH:}/usr/sbin:/sbin"
 case "$1" in
   start)
     echo -n "Starting: "$NAME
-    start-stop-daemon --start --quiet --background --no-close --make-pidfile --pidfile $PIDFILE --exec /opt/node/bin/node /home/pi/whe/sender/metadata_sender.js > /var/log/${NAME}_start.log 2>&1
+    start-stop-daemon --start --quiet --background --no-close --make-pidfile --pidfile $PIDFILE --exec /opt/node/bin/node /home/pi/whe/emitter/sender/metadataSender.js > /var/log/${NAME}_start.log 2>&1
     echo "."
     ;;
   stop)
