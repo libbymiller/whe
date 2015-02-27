@@ -16,7 +16,8 @@
   <button onclick="postMetadata('moz2')">POST /metadata (moz2)</button>
   <script>
     var config = $.get('/config').then(initWithConfig),
-        trigger;
+        trigger,
+        postMetadata;
 
     function initWithConfig(config) {
       var client = new Faye.Client('http://' + config.collector.host + ':' + config.collector.port + '/faye');
@@ -31,7 +32,7 @@
           .then(success, fail);
       }
 
-      function postMetadata(source) {
+      postMetadata = function (source) {
         var url = '/metadata',
             opts = {
               method: 'POST',

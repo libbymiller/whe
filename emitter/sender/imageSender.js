@@ -29,14 +29,14 @@ function fayeUrl(url) {
 }
 
 function handleTrigger(msg) {
-  var faceFilename = '../snapper/images/camcvface.jpg';
+  var faceFilename = '/home/pi/whe/emitter/snapper/images/camcvface.jpg';
   console.log('Trigger message received');
    try {
       console.log('faye: got message', typeof msg,  msg);
       console.log(msg.trigger);
       // load file from the expected place if it's not too old
-      console.log('looking for creation time of '+path.join(__dirname, faceFilename));
-      fs.stat(path.join(__dirname, faceFilename), fsDateCallback);
+      console.log('looking for creation time of '+faceFilename);
+      fs.stat(faceFilename, fsDateCallback);
    } catch(e) {
       console.log("problem");
       console.error(e.stack);
@@ -44,8 +44,8 @@ function handleTrigger(msg) {
 }
 
 function fsDateCallback(err, data){
-   var anyFilename = '../snapper/images/camcvimage.jpg';
-   var faceFilename = '../snapper/images/camcvface.jpg';
+   var anyFilename = '/home/pi/whe/emitter/snapper/images/camcvimage.jpg';
+   var faceFilename = '/home/pi/whe/emitter/snapper/images/camcvface.jpg';
    var threshold = 10*1000; //diff is in milliseconds, so this gives threshold in secs - should be in config?
    if(err){
       console.log("error: assuming no file, sending whatever we have");
@@ -76,8 +76,8 @@ function sendImage(filename){
    var form = r.form()
    form.append("folder_id", "0");
    form.append("source", source);
-   console.log("uploading "+path.join(__dirname, filename)+" to "+config.collector.host+":"+config.collector.port+"/image");
-   form.append("name", fs.createReadStream(path.join(__dirname, filename)));
+   console.log("uploading "+filename+" to "+config.collector.host+":"+config.collector.port+"/image");
+   form.append("name", fs.createReadStream(filename));
 }
 
 function requestCallback(err, res, body) {

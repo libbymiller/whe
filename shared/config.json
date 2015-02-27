@@ -9,7 +9,8 @@
     "distanceThresholdCm": 10
   },
   "printer": {
-    "outputDir": "/tmp"
+    "outputDir": "/tmp",
+    "noPrintTimeoutSecs": 30
   },
   "heartbeatIntervalSecs": 1
 }
