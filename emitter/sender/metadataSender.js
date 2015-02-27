@@ -8,7 +8,12 @@ var configPath = path.join(__dirname, '..', '..', 'shared', 'config.json'),
     config = require(configPath),
     client = new faye.Client( fayeUrl(config.collector) );
 
-var dataFilename = '/home/pi/whe/emitter/sniffer/data.json';
+var dataFilename = config.sniffer.dataFilename;
+
+if (!dataFilename) {
+  console.error('Set config.sniffer.dataFilename to path to save JSON');
+  process.exit();
+}
 
 client.subscribe('/trigger', handleTrigger);
 console.log("listening to "+fayeUrl(config.collector) );
