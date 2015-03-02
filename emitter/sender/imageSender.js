@@ -7,11 +7,17 @@ var faye = require('faye')
 
 var source = os.hostname();
 
-console.log("source is "+source);
+console.log("Starting snapper with source name: "+source);
 
 var configPath = path.join(__dirname, '..', '..', 'shared', 'config.json'),
     config = require(configPath),
+    imageBasePath = config.snapper.imageBasePath,
     client = new faye.Client( fayeUrl(config.collector) );
+
+if (!imageBasePath) {
+  console.error('Set config.snapper.imageBasePath to directory for saving images');
+  process.exit();
+}
 
 client.subscribe('/trigger', handleTrigger);
 console.log("subscribed to trigger");
@@ -21,7 +27,7 @@ setInterval(heartbeat, config.heartbeatIntervalSecs * 1000);
 
 // Tell everyone we're here
 function heartbeat() {
-  client.publish('/heartbeat', { id: '1', type: 'emitter' });
+  client.publish('/heartbeat', { id: source, type: 'emitter' });
 }
 
 function fayeUrl(url) {
@@ -29,7 +35,7 @@ function fayeUrl(url) {
 }
 
 function handleTrigger(msg) {
-  var faceFilename = '/home/pi/whe/emitter/snapper/images/camcvface.jpg';
+  var faceFilename = path.join(imageBasePath, '/camcvface.jpg');
   console.log('Trigger message received');
    try {
       console.log('faye: got message', typeof msg,  msg);
@@ -44,8 +50,8 @@ function handleTrigger(msg) {
 }
 
 function fsDateCallback(err, data){
-   var anyFilename = '/home/pi/whe/emitter/snapper/images/camcvimage.jpg';
-   var faceFilename = '/home/pi/whe/emitter/snapper/images/camcvface.jpg';
+   var anyFilename = path.join(imageBasePath, '/camcvimage.jpg');
+   var faceFilename = path.join(imageBasePath, '/camcvface.jpg');
    var threshold = 10*1000; //diff is in milliseconds, so this gives threshold in secs - should be in config?
    if(err){
       console.log("error: assuming no file, sending whatever we have");

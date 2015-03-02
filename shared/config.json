@@ -12,5 +12,11 @@
     "outputDir": "/tmp",
     "noPrintTimeoutSecs": 30
   },
+  "snapper": {
+    "imageBasePath": "/home/pi/whe/emitter/snapper/images/"
+  },
+  "sniffer": {
+    "dataFilename": "/home/pi/whe/emitter/sniffer/data.json"
+  },
   "heartbeatIntervalSecs": 1
 }
