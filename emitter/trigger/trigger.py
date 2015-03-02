@@ -40,6 +40,11 @@ def setup():
   time.sleep(0.3)
 
 def read():
+
+  # libby
+  signaloff = time.time()
+
+
   # sensor manual says a pulse ength of 10Us will trigger the
   # sensor to transmit 8 cycles of ultrasonic burst at 40kHz and
   # wait for the reflected ultrasonic burst to be received
