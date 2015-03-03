@@ -11,6 +11,7 @@ import time
 import sys
 import socket
 import urllib
+import json
 
 source = socket.gethostname()
             
@@ -62,21 +63,20 @@ for line in fileinput.input():
           # send data every few seconds, to make sure we capture multiple devices
           if(int(time.time()) - last_seen_anything < time_threshold):
             print "\nsaving data because "+str(time.time() - last_seen_anything)
-            data_str = "["
+            data = []
             count = 0
             for item in to_send_time:           
              item_sm = item[0:7]
              item_sm = item_sm.replace(":","-")
-             data_str = data_str + "{\"source\":\""+source+"\",\"id\": \""+item+"\", \"time\": \""+to_send_time[item]+"\", \"power\": \""+to_send_power[item]+"\", \"aps\":\""+to_send_aps[item]+"\"}"
-             sys.stdout.write(data_str)
-             if(count < len(to_send_time)-1):
-                data_str = data_str +","
-             count=count+1
-            data_str = data_str+"]"
-
+             list_item = {'source':source,'id':item, 'time': to_send_time[item], 'power': to_send_power[item], 'aps': to_send_aps[item]}
+             data.append(list_item)
+            data_sorted = sorted(data, key=lambda k: k['power']) 
+            all_data = {'data':data_sorted}
+            data_str = json.dumps(all_data)
+            
             # save the data
             file_ = open('data.json', 'w')
-            file_.write("{\"data\": "+data_str+"}")
+            file_.write(data_str)
             file_.close()
 
           # update time last seen something
