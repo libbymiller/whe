@@ -5,44 +5,55 @@
 
   <link rel="stylesheet" type="text/css" href="/css/normalize.css">
   <link rel="stylesheet" type="text/css" href="/css/skeleton.css">
+  <link rel="stylesheet" type="text/css" href="/css/screen.css">
 
   <script src="/faye/client.js"></script>
 
   <script src="/js/jquery.js"></script>
   <script src="/js/ractive.js"></script>
+  <script src="/js/lodash.js"></script>
 </head>
 <body>
-  <h1>Walls Have Eyes</h1>
   <div id="ui"></div>
   <script id="ui-template" type="text/ractive">
-  <table>
-    <tr>
-      <th>Source</th>
-      <th>Id</th>
-      <th>Time</th>
-      <th>Power</th>
-      <th>Company</th>
-      <th>Aps</th>
-      <th>Friends</th>
-    </tr>
-  {{#metadata}}
-    <tr>
-      <td>{{source}}</td>
-      <td>{{id}}</td>
-      <td>{{time}}</td>
-      <td>{{power}}</td>
-      <td>{{company}}</td>
-      <td>{{aps}}</td>
-      <td>{{friends}}</td>
-    </tr>
-  {{/metadata}}
-  </table>
 
-  {{#images}}
-    {{#files}}
+  <div class="masthead">
+    <h1>Walls Have Eyes</h1>
+    <div class="status">
+      Status: monitoring
+    </div>
+  </div>
+
+  {{#metadata.1}}
+  <div class="metadata">
+    <dl>
+      <dt>Unique device identifier</dt>
+      <dd>{{ id || 'Unknown' }}</dd>
+      <dt>Manufacturer</dt>
+      <dd>{{ company || 'Unknown' }}</dd>
+      <dt>Previous networks</dt>
+      <dd>{{ aps || 'Unknown' }}</dd>
+      <dt>Friends</dt>
+      <dd>{{ friends || 'Unknown' }}</dd>
+      <dt>Distance</dt>
+      <dd>{{ power || 'Unknown' }}</dd>
+    </dl>
+  </div>
+  {{/metadata}}
+
+  <div class="photos">
+    <div class="primary">
+    {{#primaryImage}}
       <img src="/image/{{name}}" />
-    {{/files}}
-  {{/images}}
+    {{/images}}
+    </div>
+    <div class="secondary">
+    {{#secondaryImages}}
+      <img src="/image/{{name}}" />
+    {{/images}}
+    </div>
+  </div>
+
   </script>
   <script>
     $.get('/config').then(initWithConfig);
@@ -51,7 +62,20 @@
       var client = new Faye.Client('http://' + config.collector.host + ':' + config.collector.port + '/faye');
       var ractive = new Ractive({
         el: '#ui',
-        template: '#ui-template'
+        template: '#ui-template',
+        computed: {
+          'imageFiles': function () {
+            var images = this.get('images');
+            return _(images).pluck('files').flatten().value();
+          },
+          'primaryImage': function () {
+            return this.get('imageFiles').slice(0, 1);
+          },
+          'secondaryImages': function () {
+            return this.get('imageFiles').slice(1);
+          }
+        },
+        data: {}
       });
 
       client.subscribe('/render', handleRender);
@@ -62,6 +86,7 @@
         $.get('/state')
          .then(function (data) {
             console.log('data', data);
+            window.d = data;
             ractive.set(data);
           });
       }
