@@ -56,8 +56,8 @@
 
       client.subscribe('/render', handleRender);
 
-      function handleRender(data) {
-        console.log('RENDER', data);
+      function handleRender(msg) {
+        console.log('RENDER', msg);
         $.get('/state')
          .then(function (data) {
             console.log('data', data);
