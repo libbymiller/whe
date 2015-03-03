@@ -119,6 +119,8 @@ app.post('/metadata', function (req, res) {
     Promise.all(promises)
       .then(function(data) {
         metadata.replace(data);
+        console.log("data");
+        console.log(data);
       })
       .catch(function (err) {
         console.error('Error performing lookups', err);
@@ -203,20 +205,24 @@ server.listen(port, function () {
 function performMacAddressLookup(data) {
   return new Promise(function (resolve, reject) {
     if (data.id && exclusions.indexOf(data.id) == -1) {
-      MacAddressLookup
-        .find(data.id)
-        .then(function (info) {
-          console.log('Found info: ', info);
-          if (info && info.shortName) {
-            data.shortName = info.shortName;
-            data.name = info.name;
-            resolve(data);
-          } else {
-            console.error('No MAC address info found for', data);
-          }
-        });
-    } else {
-      resolve(data);
+      if (data.id){
+        MacAddressLookup
+          .find(data.id)
+          .then(function (info) {
+            console.log('Found info: ', info);
+            if (info && info.shortName) {
+              data.shortName = info.shortName;
+              data.name = info.name;
+              resolve(data);
+            } else {
+              console.error('No MAC address info found for', data);
+            }
+          });
+      } else {
+        resolve(data);
+      }
+    }else{
+       console.error('no identifier OR excluded MAC address');
     }
   });
 }
