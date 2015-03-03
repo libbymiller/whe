@@ -1,9 +1,20 @@
 /*
   general
 */
+html {
+  /* Prevent text size change on orientation change. */
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   color: #fff;
   text-rendering: optimizeLegibility;
+  margin: 0;
+}
+
+.wrapper {
+  margin: 0;
+  padding: 0;
 }
 
 /*
@@ -16,29 +27,27 @@ body {
   left: 0;
   right: 0;
 
-  background: #333;
+  color: #333;
+  background: #fff;
 }
 
 .masthead h1,
 .masthead .status {
+  position: absolute;
+  top: 24px;
+  bottom: 0;
+
   font-size: 2rem;
   text-transform: uppercase;
   transform: translate(0, 25%);
 }
 
 .masthead h1 {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-
   margin: 0;
   padding: 0 0 0 2rem;
 }
 
 .masthead .status {
-  position: absolute;
-  top: 0;
-  bottom: 0;
   right: 0;
 
   margin: 0;
@@ -85,25 +94,35 @@ body {
   left: 0;
   right: 0;
 
+  margin: 0;
+  padding: 0;
+
   z-index: -100;
 }
 .photos .primary img {
+  display: block;
+
+  /* Set rules to fill background */
+  min-height: 10vh;
+  min-width: 10vw;
+
+  /* Set up proportionate scaling */
   width: 100%;
-  height: 100%;
+  height: auto;
 }
 .photos .secondary {
   position: absolute;
   top: 10%;
   right: 0;
 
-  width: 50%;
+  width: 50vw;
 
   padding: 2rem;
   text-align: right;
 }
 .photos .secondary img {
   margin-bottom: 1rem;
-  height: 40%;
+  height: 40vh;
 }
 
 
@@ -115,9 +134,9 @@ body {
   top: 10%;
   bottom: 0;
   left: 0;
-  right: 50%;
+  right: 40%;
 
-  padding: 2em;
+  padding: 2em 10% 2em 2em;
 
   background-color: rgba(0, 0, 0, 0.0);
   background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
