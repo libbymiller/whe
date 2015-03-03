@@ -16,6 +16,11 @@ var exclusions = excl.exclusions;
 
 var port = process.env.PORT;
 
+if (process.env.COLLECTOR_HOST) {
+  console.log('COLLECTOR_HOST environment variable detected, overriding config.json');
+  config.collector.host = process.env.COLLECTOR_HOST;
+}
+
 var app = express(),
     bayeux = new faye.NodeAdapter({mount: '/faye'}),
     client = new faye.Client('http://' + config.collector.host + ':' + port + '/faye'),
