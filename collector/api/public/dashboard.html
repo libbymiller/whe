@@ -22,6 +22,7 @@
       <button onclick="trigger()" class="button-primary">Trigger</button>
       <button onclick="postMetadata('moz1')">POST /metadata (moz1)</button>
       <button onclick="postMetadata('moz2')">POST /metadata (moz2)</button>
+      <button onclick="postMetadataWithFriends()">POST /metadata with friends</button>
     </div> <!-- .row -->
   </div>
 
@@ -77,7 +78,8 @@
     var config = $.get('/config').then(initWithConfig),
         heartbeatsUi,
         trigger,
-        postMetadata;
+        postMetadata,
+        postMetadataWithFriends;
 
     // Common moment.js helpers
     var helpers = Ractive.defaults.data;
@@ -138,10 +140,21 @@
       }
 
       postMetadata = function (source) {
+        var data = '{"data": [{"source":"' + source + '","id": "18:34:51:01:F4:32", "time": "' + Math.round( (Date.now() / 1000) ).toString() + '", "power": "-46", "company": "Apple", "aps":""}]}';
+
+        return post(data);
+      }
+
+      postMetadataWithFriends = function () {
+        var data = '{"data": [{"source": "sniffersnapper", "aps": "", "id": "00:C1:41:17:0C:F6", "power": "-14", "time": "1425383596"}, {"source": "sniffersnapper", "aps": "", "id": "00:0F:13:29:0A:43", "power": "-20", "time": "1425383596"}, {"source": "sniffersnapper", "aps": "", "id": "1A:DC:5A:D5:52:94", "power": "-28", "time": "1425383597"}, {"source": "sniffersnapper", "aps": "", "id": "00:C1:41:16:07:67", "power": "-30", "time": "1425383596"}, {"source": "sniffersnapper", "aps": "", "id": "14:10:9F:F3:5E:56", "power": "-42", "time": "1425383596"}]}';
+        return post(data);
+      }
+
+      function post(data) {
         var url = '/metadata',
             opts = {
               method: 'POST',
-              data: '{"data": [{"source":"' + source + '","id": "18:34:51:01:F4:32", "time": "' + Math.round( (Date.now() / 1000) ).toString() + '", "power": "-46", "company": "Apple", "aps":""}]}',
+              data: data,
               contentType: 'application/json'
             };
 

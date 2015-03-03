@@ -24,7 +24,7 @@
       </div>
     </div>
 
-    {{#metadata.1}}
+    {{#metadata.0}}
     <div class="metadata">
       <dl>
         <dt>Unique device identifier</dt>
@@ -34,7 +34,7 @@
         <dt>Previous networks</dt>
         <dd>{{ aps || 'Unknown' }}</dd>
         <dt>Friends</dt>
-        <dd>{{ friends || 'Unknown' }}</dd>
+        <dd>{{ ~/friends.join(', ') || 'Unknown' }}</dd>
         <dt>Distance</dt>
         <dd>{{ power || 'Unknown' }}</dd>
       </dl>
@@ -57,11 +57,13 @@
 
   </script>
   <script>
+    var ractive;
+
     $.get('/config').then(initWithConfig);
 
     function initWithConfig(config) {
       var client = new Faye.Client('http://' + config.collector.host + ':' + config.collector.port + '/faye');
-      var ractive = new Ractive({
+      ractive = new Ractive({
         el: '#ui',
         template: '#ui-template',
         computed: {
@@ -74,6 +76,9 @@
           },
           'secondaryImages': function () {
             return this.get('imageFiles').slice(1);
+          },
+          'friends': function () {
+            return _.pluck( this.get('metadata.0.friends'), 'id' );
           }
         },
         data: {

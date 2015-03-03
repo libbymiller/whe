@@ -123,9 +123,16 @@ app.post('/metadata', function (req, res) {
     // of data back
     Promise.all(promises)
       .then(function(data) {
-        metadata.replace(data);
-        console.log("data");
-        console.log(data);
+        // Remove any empty items from array
+        data = _.compact(data);
+
+        // The first item is the primary data
+        var primary = _.first(data),
+            // The MAC addresses in the tail are "friends"
+            friends = _.rest(data);
+
+        primary.friends = friends;
+        metadata.replace(primary);
       })
       .catch(function (err) {
         console.error('Error performing lookups', err);
