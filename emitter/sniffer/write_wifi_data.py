@@ -40,7 +40,7 @@ for line in fileinput.input():
         aps = ""
         if(re.search('[a-zA-Z]', arr[10])):
           aps = arr[10].strip()
-          sys.stdout.write( "aps "+ aps)
+          #sys.stdout.write( "aps "+ aps)
 
         this_id = str(arr[1].strip())
         tt = int(time.time())
