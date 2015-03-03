@@ -55,6 +55,7 @@
       });
 
       client.subscribe('/render', handleRender);
+      handleRender({}); // Initial render
 
       function handleRender(msg) {
         console.log('RENDER', msg);
