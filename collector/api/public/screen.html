@@ -16,43 +16,44 @@
 <body>
   <div id="ui"></div>
   <script id="ui-template" type="text/ractive">
-
-  <div class="masthead">
-    <h1>Walls Have Eyes</h1>
-    <div class="status">
-      Status: monitoring
+  <div class="wrapper" data-state="{{ isTriggering ? 'is-triggering' : '' }}">
+    <div class="masthead">
+      <h1>Walls Have Eyes</h1>
+      <div class="status">
+        Status: monitoring
+      </div>
     </div>
-  </div>
 
-  {{#metadata.1}}
-  <div class="metadata">
-    <dl>
-      <dt>Unique device identifier</dt>
-      <dd>{{ id || 'Unknown' }}</dd>
-      <dt>Manufacturer</dt>
-      <dd>{{ company || 'Unknown' }}</dd>
-      <dt>Previous networks</dt>
-      <dd>{{ aps || 'Unknown' }}</dd>
-      <dt>Friends</dt>
-      <dd>{{ friends || 'Unknown' }}</dd>
-      <dt>Distance</dt>
-      <dd>{{ power || 'Unknown' }}</dd>
-    </dl>
-  </div>
-  {{/metadata}}
+    {{#metadata.1}}
+    <div class="metadata">
+      <dl>
+        <dt>Unique device identifier</dt>
+        <dd>{{ id || 'Unknown' }}</dd>
+        <dt>Manufacturer</dt>
+        <dd>{{ company || 'Unknown' }}</dd>
+        <dt>Previous networks</dt>
+        <dd>{{ aps || 'Unknown' }}</dd>
+        <dt>Friends</dt>
+        <dd>{{ friends || 'Unknown' }}</dd>
+        <dt>Distance</dt>
+        <dd>{{ power || 'Unknown' }}</dd>
+      </dl>
+    </div>
+    {{/metadata}}
 
-  <div class="photos">
-    <div class="primary">
-    {{#primaryImage}}
-      <img src="/image/{{name}}" />
-    {{/images}}
+    <div class="photos">
+      <div class="primary">
+      {{#primaryImage}}
+        <img src="/image/{{name}}" />
+      {{/images}}
+      </div>
+      <div class="secondary">
+      {{#secondaryImages}}
+        <img src="/image/{{name}}" />
+      {{/images}}
+      </div>
     </div>
-    <div class="secondary">
-    {{#secondaryImages}}
-      <img src="/image/{{name}}" />
-    {{/images}}
-    </div>
-  </div>
+  </div><!-- .wrapper -->
 
   </script>
   <script>
@@ -75,11 +76,19 @@
             return this.get('imageFiles').slice(1);
           }
         },
-        data: {}
+        data: {
+          isTriggering: false
+        }
       });
 
+      client.subscribe('/trigger', handleTrigger);
       client.subscribe('/render', handleRender);
       handleRender({}); // Initial render
+
+      function handleTrigger(msg) {
+        console.log('TRIGGER', msg);
+        ractive.set('isTriggering', true);
+      }
 
       function handleRender(msg) {
         console.log('RENDER', msg);
@@ -88,6 +97,7 @@
             console.log('data', data);
             window.d = data;
             ractive.set(data);
+            ractive.set('isTriggering', false);
           });
       }
     }

@@ -57,19 +57,21 @@ body {
   background-color: red;
   border-radius: 10rem;
 
-  -webkit-animation: flash 5s infinite ease-in-out alternate;
-          animation: flash 5s infinite;
+  opacity: 0; /* default state */
+}
+
+[data-state='is-triggering'] .masthead .status:after {
+  -webkit-animation: flash 0.5s infinite ease-in-out alternate;
+          animation: flash 0.5s infinite;
 }
 
 @-webkit-keyframes flash {
   0%   { opacity: 0.0; }
-  10%  { opacity: 1.0; }
   100% { opacity: 1.0; }
 }
 
 @keyframes flash {
   0%   { opacity: 0.0; }
-  10%  { opacity: 1.0; }
   100% { opacity: 1.0; }
 }
 
