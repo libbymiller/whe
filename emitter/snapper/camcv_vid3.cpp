@@ -82,7 +82,7 @@ int im_height;          // image height
 char key;
 
 
-Mat gray,frame,face,face_resized;
+Mat gray,frame,face,face_resized,img_rgb;
 vector<Mat> images;
 vector<int> labels;
 
@@ -247,8 +247,20 @@ static void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffe
 		//  resized face and display it
 		cv::resize(face, face_resized, Size(im_width, im_height), 1.0, 1.0, CV_INTER_NN); //INTER_CUBIC);		
 
+                // convert to colour to display a green box on top
+                // read image
+//                cv::Mat img_gray = imread(path,0);
+
+                // create 8bit color image. IMPORTANT: initialize image otherwise it will result in 32F
+                //cv::Mat img_rgb(gray.size(), CV_8UC3);
+
+                // convert grayscale to color image
+                cv::cvtColor(gray, img_rgb, CV_GRAY2RGB);
+
 		// create a rectangle around the face 
-		rectangle(gray, face_i, CV_RGB(255, 255 ,255), 1);
+		//rectangle(gray, face_i, CV_RGB(255, 255 ,255), 1);
+//		rectangle(gray, face_i, CV_RGB(0, 255,0), 1);
+		rectangle(img_rgb, face_i, CV_RGB(0, 255,0), 1);
 	} // end for
 
 
@@ -258,7 +270,8 @@ static void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffe
         // Show the result:
         //imshow("camcvWin", gray);
         if(faces.size()>0){
-          imwrite( "snapper/images/camcvface.jpg", gray );
+          imwrite( "snapper/images/camcvface.jpg", img_rgb );
+//          imwrite( "snapper/images/camcvface.jpg", gray );
         }else{
           imwrite( "snapper/images/camcvimage.jpg", gray );
         }
