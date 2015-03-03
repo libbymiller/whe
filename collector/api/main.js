@@ -209,25 +209,35 @@ server.listen(port, function () {
 //           property
 function performMacAddressLookup(data) {
   return new Promise(function (resolve, reject) {
-    if (data.id && exclusions.indexOf(data.id) == -1) {
-      if (data.id){
-        MacAddressLookup
-          .find(data.id)
-          .then(function (info) {
-            console.log('Found info: ', info);
-            if (info && info.shortName) {
-              data.shortName = info.shortName;
-              data.name = info.name;
-              resolve(data);
-            } else {
-              console.error('No MAC address info found for', data);
-            }
-          });
-      } else {
-        resolve(data);
-      }
-    }else{
-       console.error('no identifier OR excluded MAC address');
+    var mac = data.id;
+
+    // Fail early if no MAC address given
+    if (!mac) {
+       console.error('no MAC address given');
+       resolve();
+       return;
     }
+
+    // Fail is MAC address is in excluded list
+    if ( _.includes(exclusions, mac) ) {
+      console.error('MAC address is excluded: ', mac);
+      resolve();
+      return;
+    }
+
+    // Perform lookup
+    MacAddressLookup
+      .find(mac)
+      .then(function (info) {
+        console.log('Found MAC address info: ', info);
+        if (info && info.shortName) {
+          data.shortName = info.shortName;
+          data.name = info.name;
+        } else {
+          console.warn('No MAC address info found for', data);
+        }
+        // Resolve with data either way
+        resolve(data);
+      });
   });
 }
