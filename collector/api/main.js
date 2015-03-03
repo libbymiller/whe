@@ -9,7 +9,10 @@ var http    = require('http'),
 var Metadata = require('./lib/metadata'),
     Images   = require('./lib/images'),
     MacAddressLookup = require('../macs/main')(),
-    config   = require('../../shared/config');
+    config   = require('../../shared/config'),
+    excl     = require('../../shared/exclusions');
+
+var exclusions = excl.exclusions;
 
 var port = process.env.PORT;
 
@@ -47,7 +50,13 @@ app.use( require('body-parser').json() );
   By default files are stored in tmp so
   will be deleted on restart
 */
-app.use( multer({}) );
+app.use( multer(
+    {
+       onFileUploadComplete: function (file, req, res) {
+         console.log(file.fieldname + ' uploaded to  ' + file.path)
+       }
+    }) 
+);
 
 /*
   Simple template engine that just fetches html files
@@ -128,6 +137,7 @@ app.get('/image/:name', function (req, res) {
   if (file && file.path && file.mimetype) {
     fs.readFile(file.path, function (err, contents) {
       if (err) {
+        console.log("err: 500");
         console.error(err);
         res.status(err).sendStatus(500);
       } else {
@@ -192,7 +202,7 @@ server.listen(port, function () {
 //           property
 function performMacAddressLookup(data) {
   return new Promise(function (resolve, reject) {
-    if (data.id) {
+    if (data.id && exclusions.indexOf(data.id) == -1) {
       MacAddressLookup
         .find(data.id)
         .then(function (info) {
