@@ -110,10 +110,28 @@ app.get('/dashboard', function (req, res) {
 // Current state of everything
 app.get('/state', function (req, res) {
   res.json({
-    metadata: metadata.toJSON(),
+    metadata: metadata.toJSON().map(sanitise),
     images  : images.toJSON()
   });
 });
+
+
+function sanitise(data) {
+  data.id = obfuscateAddress( data.id );
+  data.friends = data.friends
+                  ? data.friends.map(function (obj) {
+                      obj.id = obfuscateAddress(obj.id);
+                      return obj;
+                    })
+                  : [];
+  return data;
+}
+
+function obfuscateAddress(addrStr) {
+  return addrStr
+          ? addrStr.split(':').slice(0,5).concat('XX','XX').join(':')
+          : '';
+}
 
 // Wifi data from emitters
 app.post('/metadata', function (req, res) {
