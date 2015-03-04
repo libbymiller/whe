@@ -65,14 +65,14 @@
     {{#metadata.0}}
     <div class="metadata">
       <dl>
-        <dt>Unique device identifier</dt>
+        <dt>Tracking identifier</dt>
         <dd>{{ id || 'Unknown' }}</dd>
         <dt>Manufacturer</dt>
-        <dd>{{ company || 'Unknown' }}</dd>
+        <dd class="ellipsis">{{ shortName || 'Unknown' }} {{#name}}({{name}}){{/name}}</dd>
         <dt>Previous networks</dt>
-        <dd>{{ aps || 'Unknown' }}</dd>
+        <dd class="two-line">{{ aps || 'Unknown' }}</dd>
         <dt>Friends</dt>
-        <dd>{{ ~/friends.join(', ') || 'Unknown' }}</dd>
+        <dd>{{ ~/friends.slice(0,4).join(', ') || 'Unknown' }}</dd>
         <dt>Distance</dt>
         <dd>{{ power || 'Unknown' }}</dd>
       </dl>

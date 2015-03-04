@@ -17,6 +17,12 @@ body {
   padding: 0;
 }
 
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /*
   masthead
 */
@@ -134,7 +140,7 @@ body {
   top: 10%;
   bottom: 0;
   left: 0;
-  right: 40%;
+  right: 33%;
 
   padding: 2em 10% 2em 2em;
 
