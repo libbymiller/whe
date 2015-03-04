@@ -14,6 +14,8 @@ var path = require('path');
 var Promise = require('es6-promise').Promise;
 var http = require('http');
 
+var counter = 0;
+
 var outputDir = config.printer.outputDir,
     clientUrl = 'http://' + config.collector.host + ':' + config.collector.port + '/faye',
     printer   = config.printer.devicePath || '/dev/usb/lp0',
@@ -68,9 +70,9 @@ function handle(msg) {
     }
 
     var msgPromise = fetchState()
-                .then(fetchImage)
-                .then(saveImage)
-                .then(imageToAscii)
+//                .then(fetchImage)
+  //              .then(saveImage)
+    //            .then(imageToAscii)
                 .then(writeFile)
                 .then(printFile)
                 .then(startPrintTimeout)
@@ -168,8 +170,12 @@ function imageToAscii(obj) {
 function writeFile(params) {
 //  var contents = JSON.stringify(params.msg.metadata),
   var obj = params;
+  console.log(params);
+//  var metadata_structure = params.msg.metadata[0];//frst only
+  var metadata_structure = params.metadata[0];//frst only
+  console.log("metadata_structure");
+  console.log(metadata_structure);
 
-  var metadata_structure = params.msg.metadata;
   var source = metadata_structure.source;
   var aps = metadata_structure.aps;
   var id = metadata_structure.id;
@@ -182,18 +188,28 @@ function writeFile(params) {
   var friends = metadata_structure.friends;
 
   var friends_arr = [];
+
   for(var i=0; i<friends.length; i++){
-    var friend_shortName = friends[i].shortName;
-    if(friend_shortName){
+    var friend_shortName = friends[i].id;
+    if(friend_shortName && friends_arr.length<3){
        friends_arr.push(friend_shortName);
     }
   }
 
-  var header = '----------------------------------------------------------------------------------\n\n';
-  var contents = d+'\n\nPerson located:\n\n' + shortName + 'user, tracking identifier '+id+'\n\nKnown networks '+aps+'\n\nKnown associates '+friends_arr.join(",")+'\n\n';
+  var header = '----------------------------------------------------------------------------------';
+  var contents = '\nPerson number '+counter+' located:\n';
+  counter = counter+1
+  if(shortName){
+    contents = contents + shortName + ' user\n';
+  }
+  contents = contents + 'Tracking identifier '+id;
+  if(aps && aps!=""){
+    contents = contents + 'Known networks '+aps+'\n';
+  }
+  contents = contents + '\nKnown associates '+friends_arr.join(",")+'\n';
 
   console.log('Construct print file');
-  console.log(header + contents);
+//  console.log(header + contents);
   return new Promise(function (resolve, reject) {
 //    obj.printFile = header + contents + '\n\n\n\n' + obj.ascii;
     obj.printFile = header + contents;
