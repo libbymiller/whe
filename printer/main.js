@@ -170,11 +170,11 @@ function imageToAscii(obj) {
 function writeFile(params) {
 //  var contents = JSON.stringify(params.msg.metadata),
   var obj = params;
-  console.log(params);
+  //console.log(params);
 //  var metadata_structure = params.msg.metadata[0];//frst only
   var metadata_structure = params.metadata[0];//frst only
-  console.log("metadata_structure");
-  console.log(metadata_structure);
+//  console.log("metadata_structure");
+//  console.log(metadata_structure);
 
   var source = metadata_structure.source;
   var aps = metadata_structure.aps;
@@ -196,7 +196,7 @@ function writeFile(params) {
     }
   }
 
-  var header = '----------------------------------------------------------------------------------';
+  var header = '-------------------------------------------------------------------------------';
   var contents = '\nPerson number '+counter+' located:\n';
   counter = counter+1
   if(shortName){
