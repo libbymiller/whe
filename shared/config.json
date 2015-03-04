@@ -18,5 +18,7 @@
   "sniffer": {
     "dataFilename": "/home/pi/whe/emitter/sniffer/data.json"
   },
-  "heartbeatIntervalSecs": 1
+  "heartbeatIntervalSecs": 1,
+  "maxNumSecsBeforeRender": 2,
+  "numItemsToWaitForBeforeRender": 2
 }

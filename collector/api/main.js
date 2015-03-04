@@ -14,6 +14,14 @@ var Metadata = require('./lib/metadata'),
 
 var exclusions = excl.exclusions;
 
+var numItemsToWaitForBeforeRender = config.numItemsToWaitForBeforeRender,
+    maxNumSecsBeforeRender = config.maxNumSecsBeforeRender;
+
+if (!numItemsToWaitForBeforeRender || !maxNumSecsBeforeRender) {
+  console.log('config.numItemsToWaitForBeforeRender or config.maxNumSecsBeforeRender is not set in config.json');
+  process.exit();
+}
+
 var port = process.env.PORT;
 
 if (process.env.COLLECTOR_HOST) {
@@ -133,6 +141,8 @@ app.post('/metadata', function (req, res) {
 
         primary.friends = friends;
         metadata.replace(primary);
+
+        incrementRenderCounter();
       })
       .catch(function (err) {
         console.error('Error performing lookups', err);
@@ -169,6 +179,7 @@ app.post('/image', function (req, res) {
     req.body.files = files;
     console.log('body', req.body);
     images.replace(req.body);
+    incrementRenderCounter();
   } else {
     console.warn('No body for image POST');
   }
@@ -190,13 +201,35 @@ app.post('/image', function (req, res) {
   When the trigger happens, we wait X secs before
   asking the client to render
 */
+var renderTimeoutId,
+    renderCounter = 0;
+
 client.subscribe('/trigger', function () {
   console.log('TRIGGER');
-  setTimeout(function () {
-    console.log('RENDER');
-    client.publish('/render', {});
-  }, 2000);
+  renderTimeoutId = setTimeout(fireRender, maxNumSecsBeforeRender * 1000);
 });
+
+function incrementRenderCounter() {
+  renderCounter++;
+  console.log('incrementRenderCounter() renderCounter:', renderCounter);
+  if (renderCounter >= numItemsToWaitForBeforeRender) {
+    fireRender();
+  }
+}
+
+function fireRender() {
+  // Clear a timeout if it hasn't fired
+  if (renderTimeoutId) {
+    clearTimeout(renderTimeoutId);
+    renderTimeoutId = null;
+  }
+
+  renderCounter = 0;
+
+  // Fire render
+  console.log('RENDER');
+  client.publish('/render', {});
+}
 
 /*
   Start listening
