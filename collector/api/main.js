@@ -117,7 +117,9 @@ app.get('/state', function (req, res) {
 
 
 function sanitise(data) {
+  data = data || {}
   data.id = obfuscateAddress( data.id );
+  data.power = data.power ? data.power.replace('-', '') : null;
   data.friends = data.friends
                   ? data.friends.map(function (obj) {
                       obj.id = obfuscateAddress(obj.id);
@@ -277,7 +279,7 @@ function performMacAddressLookup(data) {
     }
 
     // Fail is MAC address is in excluded list
-    if ( _.includes(exclusions, mac) ) {
+    if ( _.filter(exclusions, function(m){return new RegExp("^"+m).test(mac);}).length > 0 ){
       console.error('MAC address is excluded: ', mac);
       resolve();
       return;
