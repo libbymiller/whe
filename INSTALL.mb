@@ -213,6 +213,12 @@ change its name to "trigger"
     sudo pico /etc/hosts
     sudo pico /etc/hostname
 
+install avahi
+    
+    git clone https://github.com/radiodan/provision
+    cd provision
+    sudo ./provision avahi
+
 install whe
 
     git clone https://github.com/libbymiller/whe
