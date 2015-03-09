@@ -41,7 +41,16 @@ try it
     foreman start -p 3000 -f collector/Procfile
 
 stop it
-    
+
+install supervisord for process management
+
+    sudo apt-get install supervisor
+
+    sudo cp collector/collector_supervisor.conf /etc/supervisor/conf.d/collector.conf
+
+    # Remove existing scripts
+    sudo update-rc.d collector remove
+
 install init.d files
 
     sudo cp collector/collector_init.d /etc/init.d/collector
@@ -106,20 +115,17 @@ test it if you like
 
 kill it
 
-install init.d files
+install supervisord for process management
 
-    sudo cp emitter/snapper/snapper_init.d /etc/init.d/snapper
-    sudo chmod a+x /etc/init.d/snapper
+    sudo apt-get install supervisor
 
-    sudo update-rc.d snapper defaults
-    sudo update-rc.d snapper enable
+    sudo cp emitter/snapper/snapper_supervisor.conf /etc/supervisor/conf.d/snapper.conf
 
-    sudo cp emitter/sender/image_sender_init.d /etc/init.d/image-sender
+    sudo cp emitter/sender/image_sender_supervisor.conf /etc/supervisor/conf.d/image-sender.conf
 
-    sudo chmod a+x /etc/init.d/image-sender
-
-    sudo update-rc.d image-sender defaults
-    sudo update-rc.d image-sender enable
+    # Remove existing scripts
+    sudo update-rc.d snapper remove
+    sudo update-rc.d image-sender remove
 
 
 
