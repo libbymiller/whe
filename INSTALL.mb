@@ -65,6 +65,7 @@ provision a card:
 
     sudo raspi-config
     expand file system
+    enable camera
 
 reboot
 
