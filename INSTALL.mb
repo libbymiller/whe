@@ -44,20 +44,16 @@ stop it
 
 install supervisord for process management
 
-    sudo apt-get install supervisor
+    sudo apt-get install supervisor -y
 
     sudo cp collector/collector_supervisor.conf /etc/supervisor/conf.d/collector.conf
 
     # Remove existing scripts
     sudo update-rc.d collector remove
 
-install init.d files
+restart or run:
 
-    sudo cp collector/collector_init.d /etc/init.d/collector
-    sudo chmod a+x /etc/init.d/collector
-
-    sudo update-rc.d collector defaults
-    sudo update-rc.d collector enable
+    sudo supervisorctl reload
 
 
 ---
@@ -127,7 +123,9 @@ install supervisord for process management
     sudo update-rc.d snapper remove
     sudo update-rc.d image-sender remove
 
+restart or run:
 
+    sudo supervisorctl reload
 
 ----
 
@@ -179,21 +177,17 @@ install airodump-ng
     make
     sudo make install
 
-add to init.d
+install supervisord for process management
 
-    sudo cp emitter/sniffer/sniffer_init.d /etc/init.d/sniffer
-    sudo chmod 755 /etc/init.d/sniffer
-    sudo chown root:root /etc/init.d/sniffer
+    sudo apt-get install supervisor -y
 
-    sudo update-rc.d sniffer defaults
-    sudo update-rc.d sniffer enable
+    sudo cp emitter/sniffer/sniffer_supervisor.conf /etc/supervisor/conf.d/sniffer.conf
+    sudo cp emitter/sender/metadata_sender_supervisor.conf /etc/supervisor/conf.d/metadata-sender.conf
 
-    sudo cp emitter/sender/metadata_sender_init.d /etc/init.d/metadata-sender
 
-    sudo chmod a+x /etc/init.d/metadata-sender
+restart or run:
 
-    sudo update-rc.d metadata-sender defaults
-    sudo update-rc.d metadata-sender enable
+    sudo supervisorctl reload
 
 ----
 
@@ -224,29 +218,12 @@ install whe
     git clone https://github.com/libbymiller/whe
     cd whe
 
-fix init.d
+install supervisord for process management
 
-    sudo cp emitter/trigger/trigger_init.d /etc/init.d/trigger
-    sudo chmod 755 /etc/init.d/trigger
-    sudo chown root:root /etc/init.d/trigger
+    sudo apt-get install supervisor -y
 
-    sudo update-rc.d trigger defaults
-    sudo update-rc.d trigger enable
+    sudo cp emitter/trigger/trigger_supervisor.conf /etc/supervisor/conf.d/trigger.conf
 
+restart or run:
 
-Snapper init.d
-
-    sudo cp ./snapper/snapper_init.d /etc/init.d/snapper
-
-    sudo chmod a+x /etc/init.d/snapper
-
-    sudo update-rc.d snapper defaults
-    sudo update-rc.d snapper enable
-
-    sudo cp sender/image_sender_init.d /etc/init.d/sender
-
-    sudo chmod a+x /etc/init.d/sender
-
-    sudo update-rc.d sender defaults
-    sudo update-rc.d sender enable
-
+    sudo supervisorctl reload
