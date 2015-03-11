@@ -1,4 +1,4 @@
-Collector
+Collector (including printer)
 --
 
 provision a card:
@@ -48,6 +48,7 @@ install supervisord for process management
 
     sudo cp shared/supervisor.conf /etc/init.d/supervisor
     sudo cp collector/collector_supervisor.conf /etc/supervisor/conf.d/collector.conf
+    sudo cp printer/printer_supervisor.conf /etc/supervisor/conf.d/printer.conf
 
     # Remove existing scripts
     sudo update-rc.d collector remove
