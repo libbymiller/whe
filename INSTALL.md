@@ -46,12 +46,17 @@ install supervisord for process management
 
     sudo apt-get install supervisor -y
 
+    sudo cp shared/supervisor.conf /etc/init.d/supervisor
     sudo cp collector/collector_supervisor.conf /etc/supervisor/conf.d/collector.conf
 
     # Remove existing scripts
     sudo update-rc.d collector remove
 
-restart or run:
+create RAM disks for relevant paths:
+
+  cat shared/fstab >> /etc/fstab
+
+restart, then run:
 
     sudo supervisorctl reload
 
@@ -123,7 +128,11 @@ install supervisord for process management
     sudo update-rc.d snapper remove
     sudo update-rc.d image-sender remove
 
-restart or run:
+create RAM disks for relevant paths:
+
+  cat shared/fstab >> /etc/fstab
+
+restart, then run:
 
     sudo supervisorctl reload
 
@@ -148,7 +157,7 @@ reboot
     sudo apt-get update && sudo apt-get upgrade -y
 
 install avahi and node
-	
+
     git clone https://github.com/radiodan/provision
     cd provision
     sudo ./provision avahi node
@@ -181,11 +190,16 @@ install supervisord for process management
 
     sudo apt-get install supervisor -y
 
+    sudo cp shared/supervisor.conf /etc/init.d/supervisor
     sudo cp emitter/sniffer/sniffer_supervisor.conf /etc/supervisor/conf.d/sniffer.conf
     sudo cp emitter/sender/metadata_sender_supervisor.conf /etc/supervisor/conf.d/metadata-sender.conf
 
 
-restart or run:
+create RAM disks for relevant paths:
+
+  cat shared/fstab >> /etc/fstab
+
+restart, then run:
 
     sudo supervisorctl reload
 
@@ -214,7 +228,7 @@ change its name to "trigger"
     sudo pico /etc/hostname
 
 install avahi
-    
+
     git clone https://github.com/radiodan/provision
     cd provision
     sudo ./provision avahi
@@ -228,8 +242,13 @@ install supervisord for process management
 
     sudo apt-get install supervisor -y
 
+    sudo cp shared/supervisor.conf /etc/init.d/supervisor
     sudo cp emitter/trigger/trigger_supervisor.conf /etc/supervisor/conf.d/trigger.conf
 
-restart or run:
+create RAM disks for relevant paths:
+
+  cat shared/fstab >> /etc/fstab
+
+restart, then run:
 
     sudo supervisorctl reload
