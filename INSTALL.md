@@ -54,7 +54,7 @@ install supervisord for process management
 
 create RAM disks for relevant paths:
 
-  cat shared/fstab >> /etc/fstab
+    sudo cat shared/fstab >> /etc/fstab
 
 restart, then run:
 
@@ -130,7 +130,7 @@ install supervisord for process management
 
 create RAM disks for relevant paths:
 
-  cat shared/fstab >> /etc/fstab
+    sudo cat shared/fstab >> /etc/fstab
 
 restart, then run:
 
@@ -197,7 +197,7 @@ install supervisord for process management
 
 create RAM disks for relevant paths:
 
-  cat shared/fstab >> /etc/fstab
+    sudo cat shared/fstab >> /etc/fstab
 
 restart, then run:
 
@@ -247,7 +247,7 @@ install supervisord for process management
 
 create RAM disks for relevant paths:
 
-  cat shared/fstab >> /etc/fstab
+    sudo cat shared/fstab >> /etc/fstab
 
 restart, then run:
 
