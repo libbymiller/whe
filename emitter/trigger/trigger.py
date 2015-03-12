@@ -3,6 +3,7 @@ import sys
 import json
 import signal
 import time
+import math
 
 import httplib
 import urllib
@@ -128,20 +129,28 @@ signal.signal(signal.SIGTERM, handleSigTERM)
 setup()
 
 has_triggered = False
+last_distance = 0
 
 # Main loop
 while True:
-  distance = read()
-  log(distance)
+  distance = math.ceil( read() )
+
+  # Log if distance has changed
+  if distance != last_distance:
+    log(distance)
+    last_distance = distance
+
+  # If within distance threshold ...
   if distance < distance_threshold_cm:
     log("Within distance threshold")
+    # ... and not in triggered state
     if has_triggered == False:
       log("Triggering")
       send_trigger_message()
       has_triggered = True
-  else:
+  # else outside of distance threshold and in triggered state
+  elif has_triggered == True:
     log("Outside of distance threshold...reset")
-    sys.stdout.flush()
     has_triggered = False
 
   time.sleep(0.5)
