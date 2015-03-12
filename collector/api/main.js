@@ -4,6 +4,7 @@ var http    = require('http'),
     fs      = require('fs'),
     multer  = require('multer'),
     _       = require('lodash'),
+    cors    = require('cors'),
     Promise = require('es6-promise').Promise;
 
 var Metadata = require('./lib/metadata'),
@@ -57,6 +58,11 @@ app.use( express.static(__dirname + '/public') );
   Parse json out of POST bodies
 */
 app.use( require('body-parser').json() );
+
+/*
+  Cross-origin resource sharing
+*/
+app.use( cors() );
 
 /*
   Handle multipart form data (with images)
