@@ -110,9 +110,9 @@ def send_trigger_message():
     conn = httplib.HTTPConnection(host, port)
     conn.request("POST", "/faye", msg, headers)
     response = conn.getresponse()
-    log(response.status + " " + response.reason)
+    log(str(response.status) + " " + response.reason)
     data = response.read()
-  except:
+  except httplib.HTTPException, e:
     log("Error making HTTP request")
   finally:
     conn.close()
