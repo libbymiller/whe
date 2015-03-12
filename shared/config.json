@@ -11,7 +11,7 @@
   },
   "printer": {
     "outputDir": "/tmp",
-    "noPrintTimeoutSecs": 2
+    "noPrintTimeoutSecs": 10
   },
   "snapper": {
     "imageBasePath": "/home/pi/whe/emitter/snapper/images/"
