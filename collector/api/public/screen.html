@@ -82,12 +82,12 @@
     <div class="photos">
       <div class="primary">
       {{#primaryImage}}
-        <img src="/image/{{name}}" />
+        <img src="{{collectorBase}}/image/{{name}}" />
       {{/images}}
       </div>
       <div class="secondary">
       {{#secondaryImages}}
-        <img src="/image/{{name}}" />
+        <img src="{{collectorBase}}/image/{{name}}" />
       {{/images}}
       </div>
     </div>
@@ -100,7 +100,8 @@
     $.get('/config').then(initWithConfig);
 
     function initWithConfig(config) {
-      var client = new Faye.Client('http://' + config.collector.host + ':' + config.collector.port + '/faye');
+      var collectorBase = 'http://' + config.collector.host + ':' + config.collector.port;
+      var client = new Faye.Client(collectorBase + '/faye');
       ractive = new Ractive({
         el: '#ui',
         template: '#ui-template',
@@ -120,6 +121,7 @@
           }
         },
         data: {
+          collectorBase: collectorBase,
           isTriggering: false
         }
       });
@@ -135,7 +137,7 @@
 
       function handleRender(msg) {
         console.log('RENDER', msg);
-        $.get('/state')
+        $.get(collectorBase + '/state')
          .then(function (data) {
             console.log('data', data);
             window.d = data;
