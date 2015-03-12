@@ -22,6 +22,10 @@ echo_pin = config['trigger']['echoPin']
 
 distance_threshold_cm = config['trigger']['distanceThresholdCm']
 
+def log(msg):
+  print msg
+  sys.stdout.flush()
+
 def setup():
   GPIO.setmode(GPIO.BOARD)
 
@@ -94,31 +98,28 @@ def read():
   return distance
 
 def teardown():
-  print 'clean up GPIO...'
-  sys.stdout.flush()
+  log('Cleaning up GPIO...')
   GPIO.cleanup()
 
 def send_trigger_message():
-  print "send trigger message"
-  sys.stdout.flush()
+  log("Send trigger message")
   msg = '{"channel":"/trigger","data":{}}'
-
-  params = urllib.urlencode({'@number': 12524, '@type': 'issue', '@action': 'show'})
   headers = { "Content-type": "application/json" }
-  conn = httplib.HTTPConnection(host, port)
-  conn.request("POST", "/faye", msg, headers)
-  response = conn.getresponse()
-  print response.status, response.reason
-  sys.stdout.flush()
-  data = response.read()
-  print data
-  sys.stdout.flush()
-  conn.close()
+
+  try:
+    conn = httplib.HTTPConnection(host, port)
+    conn.request("POST", "/faye", msg, headers)
+    response = conn.getresponse()
+    log(response.status + " " + response.reason)
+    data = response.read()
+  except:
+    log("Error making HTTP request")
+  finally:
+    conn.close()
 
 def handleSigTERM():
   teardown()
-  print '...exit'
-  sys.stdout.flush()
+  log('...exit')
   sys.exit()
 
 
@@ -128,22 +129,19 @@ setup()
 
 has_triggered = False
 
+# Main loop
 while True:
   distance = read()
-  print distance
-  sys.stdout.flush()
+  log(distance)
   if distance < distance_threshold_cm:
-    print "Within distance threshold"
-    sys.stdout.flush()
+    log("Within distance threshold")
     if has_triggered == False:
-      print "Triggering"
-      sys.stdout.flush()
+      log("Triggering")
       send_trigger_message()
       has_triggered = True
   else:
-    print "Outside of distance threshold...reset"
+    log("Outside of distance threshold...reset")
     sys.stdout.flush()
     has_triggered = False
 
   time.sleep(0.5)
-
