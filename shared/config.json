@@ -6,7 +6,8 @@
   "trigger": {
     "triggerPin": 16,
     "echoPin": 18,
-    "distanceThresholdCm": 10
+    "distanceThresholdCm": 10,
+    "logDistance": true
   },
   "printer": {
     "outputDir": "/tmp",

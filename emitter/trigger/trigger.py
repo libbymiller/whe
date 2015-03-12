@@ -18,6 +18,8 @@ config = json.loads(config_file)
 host = config['collector']['host']
 port = config['collector']['port']
 
+log_distance = config['trigger']['logDistance']
+
 trigger_pin = config['trigger']['triggerPin']
 echo_pin = config['trigger']['echoPin']
 
@@ -136,7 +138,7 @@ while True:
   distance = math.ceil( read() )
 
   # Log if distance has changed
-  if distance != last_distance:
+  if log_distance and (distance != last_distance):
     log(distance)
     last_distance = distance
 
