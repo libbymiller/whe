@@ -12,7 +12,7 @@ var configPath = path.join(__dirname, '..', '..', 'shared', 'config.json'),
     utilsPath = path.join(__dirname, '..', '..', 'shared', 'utils.js'),
     utils = require(utilsPath),
     imageBasePath = config.snapper.imageBasePath,
-    heartbeatInfo = utils.heartbeatInfoForType('emitter'),
+    heartbeatInfo = utils.heartbeatInfoForType('snapper'),
     client = new faye.Client( fayeUrl(config.collector) );
 
 console.log("Starting snapper with info " + heartbeatInfo.ip);

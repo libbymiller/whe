@@ -6,6 +6,9 @@ var faye = require('faye')
 
 var configPath = path.join(__dirname, '..', '..', 'shared', 'config.json'),
     config = require(configPath),
+    utilsPath = path.join(__dirname, '..', '..', 'shared', 'utils.js'),
+    utils = require(utilsPath),
+    heartbeatInfo = utils.heartbeatInfoForType('sniffer'),
     client = new faye.Client( fayeUrl(config.collector) );
 
 var dataFilename = config.sniffer.dataFilename;
@@ -23,7 +26,7 @@ setInterval(heartbeat, config.heartbeatIntervalSecs * 1000);
 
 // Tell everyone we're here
 function heartbeat() {
-  client.publish('/heartbeat', { id: 'metadata', type: 'emitter' });
+  client.publish('/heartbeat', heartbeatInfo);
 }
 
 function fayeUrl(url) {
