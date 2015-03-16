@@ -7,6 +7,7 @@ console.log('Printer started');
 
 var faye = require('faye');
 var config = require('../shared/config');
+var utils = require('../shared/utils');
 
 var fs = require('fs');
 var exec = require('child_process').exec;
@@ -47,11 +48,13 @@ if (!outputDir) {
   process.exit();
 }
 
+var heartbeatInfo = utils.heartbeatInfoForType('printer');
+
 // Send a heartbeat every few secs (defined in config)
 setInterval(heartbeat, config.heartbeatIntervalSecs * 1000);
 
 function heartbeat() {
-  client.publish('/heartbeat', { id: 'printer', type: 'printer' });
+  client.publish('/heartbeat', heartbeatInfo);
 }
 
 
