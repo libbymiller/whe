@@ -117,9 +117,16 @@ app.get('/dashboard', function (req, res) {
 app.get('/state', function (req, res) {
   res.json({
     metadata: metadata.toJSON().map(sanitise),
-    images  : images.toJSON()
+    images  : images.toJSON(),
+    latestImages : _.pluck(images.toJSON(), 'source').map(latestImageUrl)
   });
 });
+
+function latestImageUrl(source) {
+  return 'http://'
+          + config.collector.host + ':' + config.collector.port
+          + '/image/latest/' + source;
+}
 
 
 function sanitise(data) {

@@ -82,12 +82,12 @@
     <div class="photos">
       <div class="primary">
       {{#primaryImage}}
-        <img src="{{url}}" />
+        <img src="{{.}}" />
       {{/images}}
       </div>
       <div class="secondary">
       {{#secondaryImages}}
-        <img src="{{url}}" />
+        <img src="{{.}}" />
       {{/images}}
       </div>
     </div>
@@ -107,8 +107,8 @@
         template: '#ui-template',
         computed: {
           'imageFiles': function () {
-            var images = this.get('images');
-            return _(images).pluck('files').flatten().value();
+            var images = this.get('latestImages');
+            return images;
           },
           'primaryImage': function () {
             return this.get('imageFiles').slice(0, 1);
