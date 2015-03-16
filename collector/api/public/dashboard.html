@@ -33,12 +33,14 @@
     <table>
       <tr>
         <th>Id</th>
+        <th>IP</th>
         <th>Type</th>
         <th>Last seen</th>
       </tr>
     {{#heartbeats:index}}
       <tr>
         <td>{{id}}</td>
+        <td>{{ip}}</td>
         <td>{{type}}</td>
         <td>{{fromNow(time, now)}}</td>
       </tr>
