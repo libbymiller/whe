@@ -118,7 +118,7 @@ app.get('/state', function (req, res) {
   res.json({
     metadata: metadata.toJSON().map(sanitise),
     images  : images.toJSON(),
-    latestImages : _.pluck(images.toJSON(), 'source').map(latestImageUrl)
+    latestImages : _.pluck(images.toJSON(), 'source').sort().map(latestImageUrl)
   });
 });
 
@@ -193,17 +193,22 @@ app.get('/image/latest/:source', function (req, res) {
   var imageFromSource = images.get(source);
   console.log('imageFromSource', imageFromSource);
 
-  var path = __dirname + '/public/images/fallback-snapper-image.jpg';
-  var mime = 'image/jpeg';
+  var file, path, mime;
 
   if (imageFromSource) {
-    var file = _.first(imageFromSource.files) || {},
-        path = file.path,
-        mime = file.mimetype;
+    file = _.first(imageFromSource.files) || {};
+    path = file.path;
+    mime = file.mimetype;
   }
 
-  serveFile(path, mime, res);
+  fs.exists(path, function (exists) {
+    if (!exists) {
+      path = __dirname + '/public/images/fallback-snapper-image.jpg';
+      mime = 'image/jpeg'
+    }
 
+    serveFile(path, mime, res);
+  });
 });
 
 app.get('/image/:name', function (req, res) {
