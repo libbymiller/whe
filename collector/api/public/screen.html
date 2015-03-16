@@ -107,7 +107,7 @@
         template: '#ui-template',
         computed: {
           'imageFiles': function () {
-            var images = this.get('latestImages');
+            var images = this.get('latestImages').map(addCachebuster);
             return images;
           },
           'primaryImage': function () {
@@ -144,6 +144,10 @@
             ractive.set(data);
             ractive.set('isTriggering', false);
           });
+      }
+
+      function addCachebuster(url) {
+        return url + '?' + Date.now();
       }
     }
 
