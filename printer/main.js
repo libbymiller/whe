@@ -51,7 +51,7 @@ if (!outputDir) {
 setInterval(heartbeat, config.heartbeatIntervalSecs * 1000);
 
 function heartbeat() {
-  client.publish('/heartbeat', { id: '1', type: 'printer' });
+  client.publish('/heartbeat', { id: 'printer', type: 'printer' });
 }
 
 
