@@ -7,12 +7,15 @@ var faye = require('faye')
 
 var source = os.hostname();
 
-console.log("Starting snapper with source name: "+source);
-
 var configPath = path.join(__dirname, '..', '..', 'shared', 'config.json'),
     config = require(configPath),
+    utilsPath = path.join(__dirname, '..', '..', 'shared', 'utils.js'),
+    utils = require(utilsPath),
     imageBasePath = config.snapper.imageBasePath,
+    heartbeatInfo = utils.heartbeatInfoForType('emitter'),
     client = new faye.Client( fayeUrl(config.collector) );
+
+console.log("Starting snapper with info " + heartbeatInfo.ip);
 
 if (!imageBasePath) {
   console.error('Set config.snapper.imageBasePath to directory for saving images');
@@ -27,7 +30,7 @@ setInterval(heartbeat, config.heartbeatIntervalSecs * 1000);
 
 // Tell everyone we're here
 function heartbeat() {
-  client.publish('/heartbeat', { id: source, type: 'emitter' });
+  client.publish('/heartbeat', heartbeatInfo);
 }
 
 function fayeUrl(url) {
