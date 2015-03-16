@@ -23,7 +23,7 @@ setInterval(heartbeat, config.heartbeatIntervalSecs * 1000);
 
 // Tell everyone we're here
 function heartbeat() {
-  client.publish('/heartbeat', { id: '1', type: 'emitter' });
+  client.publish('/heartbeat', { id: 'metadata', type: 'emitter' });
 }
 
 function fayeUrl(url) {
