@@ -180,20 +180,31 @@ app.post('/metadata', function (req, res) {
   res.sendStatus(202);
 });
 
+app.get('/image/latest/:source', function (req, res) {
+  var source = req.params.source;
+  console.log('source', source);
+  var imageFromSource = images.get(source);
+  console.log('imageFromSource', imageFromSource);
+
+  var path = __dirname + '/public/images/fallback-snapper-image.jpg';
+  var mime = 'image/jpeg';
+
+  if (imageFromSource) {
+    var file = _.first(imageFromSource.files) || {},
+        path = file.path,
+        mime = file.mimetype;
+  }
+
+  serveFile(path, mime, res);
+
+});
+
 app.get('/image/:name', function (req, res) {
   var name = req.params.name,
       file = images.findFile(name);
 
   if (file && file.path && file.mimetype) {
-    fs.readFile(file.path, function (err, contents) {
-      if (err) {
-        console.log("err: 500");
-        console.error(err);
-        res.status(err).sendStatus(500);
-      } else {
-        res.set('Content-Type', file.mimetype).send(contents);
-      }
-    });
+    serveFile(file.path, file.mimetype, res);
   } else {
     res.sendStatus(404);
   }
@@ -222,6 +233,22 @@ app.post('/image', function (req, res) {
 //   console.log('New client connected', id);
 //   client.publish('/handshake', { id: id });
 // });
+
+/*
+  Serve a file from disk with the given mimetype
+  res: serve throught this response object
+*/
+function serveFile(path, mime, res) {
+  fs.readFile(path, function (err, contents) {
+    if (err) {
+      console.log("err: 500");
+      console.error(err);
+      res.status(err).sendStatus(500);
+    } else {
+      res.set('Content-Type', mime).send(contents);
+    }
+  });
+}
 
 /*
   When the trigger happens, we wait X secs before
