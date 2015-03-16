@@ -120,8 +120,8 @@
       // Display heartbeats of all clients
       client.subscribe('/heartbeat', function (thing) {
         console.log('/heartbeat', thing);
-        if (thing && thing.id) {
-          var keypath = 'heartbeats.' + thing.id;
+        if (thing && thing.id && thing.type) {
+          var keypath = 'heartbeats.' + thing.id + '-' + thing.type;
           console.log('set keypath', keypath);
           thing.time = new Date();
           heartbeatsUi.set(keypath, thing);
