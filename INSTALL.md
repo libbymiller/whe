@@ -101,6 +101,7 @@ install foreman in case you want to test it locally
 
 install whe
 
+    cd
     git clone https://github.com/libbymiller/whe
     cd whe
     npm install
