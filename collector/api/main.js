@@ -132,7 +132,7 @@ function latestImageUrl(source) {
 function sanitise(data) {
   data = data || {}
   data.id = obfuscateAddress( data.id );
-  data.power = data.power ? data.power.replace('-', '') : null;
+  //data.power = data.power ? data.power.replace('-', '') : null;
   data.friends = data.friends
                   ? data.friends.map(function (obj) {
                       obj.id = obfuscateAddress(obj.id);
