@@ -167,13 +167,15 @@ app.post('/metadata', function (req, res) {
         // Remove any empty items from array
         data = _.compact(data);
 
-        // The first item is the primary data
-        var primary = _.first(data),
-            // The MAC addresses in the tail are "friends"
-            friends = _.rest(data);
+        // // The first item is the primary data
+        // var primary = _.first(data),
+        //     // The MAC addresses in the tail are "friends"
+        //     friends = _.rest(data);
 
-        primary.friends = friends;
-        metadata.replace(primary);
+        // primary.friends = friends;
+        // metadata.replace(primary);
+
+        metadata.replace(data);
 
         incrementRenderCounter();
       })

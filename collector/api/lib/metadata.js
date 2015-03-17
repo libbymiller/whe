@@ -1,7 +1,7 @@
 var AmpersandCollection = require('ampersand-collection');
 
 var Metadata = AmpersandCollection.extend({
-  mainIndex: 'source'
+  mainIndex: 'id'
 });
 
 /*
@@ -13,7 +13,7 @@ Metadata.prototype.replace = function (data) {
   if (data.forEach) {
     data.forEach(this.replace.bind(this));
   } else {
-    if ( this.get(data.source) ) {
+    if ( this.get(data.id) ) {
       this.remove(data, { silent: true });
     }
     this.add(data);
