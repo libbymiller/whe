@@ -2,7 +2,9 @@ var AmpersandCollection = require('ampersand-collection');
 
 var Metadata = AmpersandCollection.extend({
   mainIndex: 'id',
-  comparator: 'power'
+  comparator: function (a,b) {
+    return a.power < b.power;
+  }
 });
 
 /*
