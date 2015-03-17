@@ -1,7 +1,8 @@
 var AmpersandCollection = require('ampersand-collection');
 
 var Metadata = AmpersandCollection.extend({
-  mainIndex: 'id'
+  mainIndex: 'id',
+  comparator: 'power'
 });
 
 /*
