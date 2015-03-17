@@ -13,84 +13,138 @@ import socket
 import urllib
 import json
 
+# Log to stdout
+# TODO: Need to flush buffer for instant logging?
+def log(msg):
+    print msg
+    sys.stdout.flush()
+
+# Return path to save data to from config.json
+def get_data_file_path():
+    script_path = os.path.dirname(os.path.realpath(__file__))
+
+    config_file = open(os.path.join(script_path, "..", "..", "shared", "config.json"), "r").read()
+    config = json.loads(config_file)
+
+    return config["sniffer"]["dataFilename"]
+
+# Given line input array, find and return APs
+def get_aps_from_arr(arr):
+    aps = ""
+
+    if( re.search('[a-zA-Z]', arr[10]) ):
+        aps = arr[10].strip()
+
+    return aps
+
+# Sort data by power and save to path
+def sort_and_save_data(data, file_path):
+    # Sort by power
+    data_sorted = sorted(data.values(), key=lambda k: k['power'])
+    all_data = {'data': data_sorted}
+    data_str = json.dumps(all_data)
+
+    # save the data
+    output_file = open(file_path, 'w')
+    output_file.write(data_str)
+    output_file.close()
+
+
 source = socket.gethostname()
-            
-print source
+log("Source: " + source)
 
-script_path = os.path.dirname(os.path.realpath(__file__))
+data_file_path = get_data_file_path()
+log("Will save data to: " + data_file_path)
 
-config_file = open(os.path.join(script_path, "..", "..", "shared", "config.json"), "r").read()
-config = json.loads(config_file)
+# Indexed by mac address as 'id'
+# {
+#    'source': source,
+#    'id'    : item,
+#    'time'  : to_send_time[item],
+#    'power' : to_send_power[item],
+#    'aps'   : to_send_aps[item]
+# }
+data = {}
 
-data_file_path = config["sniffer"]["dataFilename"]
-
-print "Will save data to: " + data_file_path
-
-to_send_power = {}
-to_send_time = {}
-to_send_aps = {}
 last_time_seen = int(time.time())
 last_seen_anything = 100
 time_threshold = 10
 power_threshold = -51
 exclusions = []
 
-# should check for exclusions here
-
-# Then parse the data
+# Parse data from stdin
 for line in fileinput.input():
     pass
 
+    # Identify line
     if(re.search('  \w\w\:\w\w', line)):
-      try:
-        arr = re.split('  ',line)
-        #sys.stdout.write( "arr "+ "\t".join(arr))
-        power = arr[2].strip()
-        aps = ""
-        if(re.search('[a-zA-Z]', arr[10])):
-          aps = arr[10].strip()
-          #sys.stdout.write( "aps "+ aps)
+        try:
+            arr = re.split('  ',line)
+        except Exception, e:
+            log("Error splitting line", line)
+            print e
+            pass
 
-        this_id = str(arr[1].strip())
-        tt = int(time.time())
-        if(power!="" and int(power) > power_threshold and int(power)!=-1):
+        try:
+            power = arr[2].strip()
+            aps   = get_aps_from_arr(arr)
+            mac   = str(arr[1].strip())
+        except Exception, e:
+            log("Error getting power, aps and MAC address")
+            print e
+            pass
 
-          if (this_id in exclusions):
-            #print "do nothing, excluded"
-            sys.stdout.write('-')
-          else:
-            sys.stdout.write('.')
-            #print "found "+str(this_id)+" power "+str(power)
-            #print "updating last seen anything to "+str(tt)         
-            to_send_power[this_id] = str(power)
-            to_send_time[this_id] = str(tt)
-            to_send_aps[this_id] = str(aps)
-            last_seen_anything = tt
+        try:
+            # Current time for this loop
+            current_loop_time = int(time.time())
+            # If power value is correct and within threshold
+            has_power = power != "" and int(power) > power_threshold and int(power) != -1
+        except Exception, e:
+            log("Error calculating if how_power or current_loop_time")
+            print e
+            pass
 
-        if(len(to_send_power) > 0 and int(time.time()) - last_time_seen > 10):
+        try:
+            if( has_power ):
+                if (mac in exclusions):
+                    # MAC is excluded
+                    log('-')
+                else:
+                    # Included
+                    log('.')
 
-          # send data every few seconds, to make sure we capture multiple devices
-          if(int(time.time()) - last_seen_anything < time_threshold):
-            print "\nsaving data because "+str(time.time() - last_seen_anything)
-            data = []
-            count = 0
-            for item in to_send_time:           
-             item_sm = item[0:7]
-             item_sm = item_sm.replace(":","-")
-             list_item = {'source':source,'id':item, 'time': to_send_time[item], 'power': to_send_power[item], 'aps': to_send_aps[item]}
-             data.append(list_item)
-            data_sorted = sorted(data, key=lambda k: k['power']) 
-            all_data = {'data':data_sorted}
-            data_str = json.dumps(all_data)
-            
-            # save the data
-            file_ = open(data_file_path, 'w')
-            file_.write(data_str)
-            file_.close()
+                    # New
+                    if( mac not in data ):
+                        data[mac] = {}
 
-          # update time last seen something
-          last_time_seen = int(time.time())
+                    data[mac]['id']     = mac
+                    data[mac]['source'] = source
+                    data[mac]['power']  = str(power)
+                    data[mac]['time']   = str(current_loop_time)
+                    data[mac]['aps']    = str(aps)
 
-      except Exception, e:
-        print e
-        pass
+                    last_seen_anything = current_loop_time
+        except Exception, e:
+            log("Error putting data into data structure for mac" + mac)
+            print e
+            pass
+
+        try:
+            have_items_to_send   = len(data) > 0
+            time_passed_interval = int(time.time()) - last_time_seen
+
+            if(have_items_to_send and time_passed_interval > 10):
+
+                # send data every few seconds, to make sure we capture multiple devices
+                time_since_last_seen_something = int(time.time()) - last_seen_anything
+                if( time_since_last_seen_something < time_threshold ):
+                    log("Saving data because time_since_last_seen_something: " + str(time_since_last_seen_something))
+                    sort_and_save_data(data, data_file_path)
+
+                # update time last seen something
+                last_time_seen = int(time.time())
+
+        except Exception, e:
+            log("Error deciding time interval for saving data or saving data to file")
+            print e
+            pass
