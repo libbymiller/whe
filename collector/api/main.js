@@ -232,15 +232,27 @@ app.get('/image/:name', function (req, res) {
   }
 });
 
+function rejectSize0(f) {
+  return !!f.size;
+}
+
+function addCollectorUrl(f) {
+  f.url = 'http://' + config.collector.host + ':' + config.collector.port + '/image/' + f.name;
+  return f;
+}
+
 app.post('/image', function (req, res) {
-  var files = _.toArray(req.files).map(function (f) { f.url = 'http://' + config.collector.host + ':' + config.collector.port + '/image/' + f.name; return f });
-  if (req.body) {
+  var files = _.toArray(req.files)
+                .filter(rejectSize0)
+                .map(addCollectorUrl);
+
+  if (req.body && files.length > 0) {
     req.body.files = files;
     console.log('body', req.body);
     images.replace(req.body);
     incrementRenderCounter();
   } else {
-    console.warn('No body for image POST');
+    console.warn('No body or images for image POST');
   }
   res.sendStatus(202);
 });
