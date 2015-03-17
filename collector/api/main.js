@@ -180,7 +180,9 @@ app.post('/metadata', function (req, res) {
           return datum;
         });
 
-        metadata.replace(data);
+        // Remove all data in model and replace with new
+        // array of data
+        metadata.reset(data);
 
         incrementRenderCounter();
       })
