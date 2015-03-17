@@ -112,11 +112,13 @@ install whe
     cd
     cd whe/emitter
 
-test it if you like
+test it if you like:
+
+uncomment snapper in Procfile, then
 
     foreman start
 
-kill it
+then kill it (control-C)
 
 install supervisord for process management
 
