@@ -17,6 +17,15 @@ source = socket.gethostname()
             
 print source
 
+script_path = os.path.dirname(os.path.realpath(__file__))
+
+config_file = open(os.path.join(script_path, "..", "..", "shared", "config.json"), "r").read()
+config = json.loads(config_file)
+
+data_file_path = config["sniffer"]["dataFilename"]
+
+print "Will save data to: " + data_file_path
+
 to_send_power = {}
 to_send_time = {}
 to_send_aps = {}
@@ -75,7 +84,7 @@ for line in fileinput.input():
             data_str = json.dumps(all_data)
             
             # save the data
-            file_ = open('data.json', 'w')
+            file_ = open(data_file_path, 'w')
             file_.write(data_str)
             file_.close()
 
