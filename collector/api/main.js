@@ -132,7 +132,6 @@ function latestImageUrl(source) {
 function sanitise(data) {
   data = data || {}
   data.id = obfuscateAddress( data.id );
-  //data.power = data.power ? data.power.replace('-', '') : null;
   data.friends = data.friends
                   ? data.friends.map(function (obj) {
                       obj.id = obfuscateAddress(obj.id);
@@ -174,6 +173,12 @@ app.post('/metadata', function (req, res) {
 
         // primary.friends = friends;
         // metadata.replace(primary);
+
+        data = data.map(function (datum) {
+          datum.power = datum.power ? parseInt(datum.power, 10) : null;
+          datum.time = datum.time   ? parseInt(datum.time, 10)  : null;
+          return datum;
+        });
 
         metadata.replace(data);
 
