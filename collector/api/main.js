@@ -116,8 +116,9 @@ app.get('/dashboard', function (req, res) {
 // Current state of everything
 app.get('/state', function (req, res) {
   res.json({
+    devices: metadata.length,
     metadata: metadata.toJSON().map(sanitise),
-    images  : images.toJSON(),
+    images  : images.toJSON().slice(0, 10),
     latestImages : _.pluck(images.toJSON(), 'source').sort().map(latestImageUrl)
   });
 });
