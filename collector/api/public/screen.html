@@ -56,38 +56,40 @@
   <script id="ui-template" type="text/ractive">
   <div class="wrapper" data-state="{{ isTriggering ? 'is-triggering' : '' }}">
     <div class="masthead">
-      <h1>Walls Have Eyes</h1>
       <div class="status">
         Status: monitoring
       </div>
     </div>
 
-    {{#metadata.0}}
     <div class="metadata">
-      <dl>
-        <dt>Tracking identifier</dt>
-        <dd>{{ id || 'Unknown' }}</dd>
-        <dt>Manufacturer</dt>
-        <dd class="ellipsis">{{ shortName || 'Unknown' }} {{#name}}({{name}}){{/name}}</dd>
-        <dt>Previous networks</dt>
-        <dd class="two-line">{{ aps || 'Unknown' }}</dd>
-        <dt>Friends</dt>
-        <dd>{{ ~/friends.slice(0,4).join(', ') || 'Unknown' }}</dd>
-        <dt>Distance</dt>
-        <dd>{{ power || 'Unknown' }}</dd>
+      <h2>Nearby devices</h2>
+      {{#filterNoAps(metadata).slice(0, 3):index}}
+      <dl class="md md-{{index}}">
+        <dt>Device
+          <span class="fadeable">{{index + 1}}</span> / <span class="fadeable">{{devices}}</span>
+        </dt>
+        <dt class="aps">Networks</dt>
+        <dd class="aps two-line fadeable">
+          {{#isTriggering}}Searching{{/isTriggering}}
+          {{^isTriggering}}{{ aps || 'Unknown' }}{{/isTriggering}}
+        </dd>
+        <dt class="manufacturer">Manufacturer</dt>
+        <dd class="manufacturer ellipsis fadeable">{{ shortName || 'Unknown' }} {{#name}}({{name}}){{/name}}</dd>
+        <dt class="mac">Device ID</dt>
+        <dd class="mac fadeable">{{ id || 'Unknown' }}</dd>
       </dl>
+      {{/metadata}}
     </div>
-    {{/metadata}}
 
     <div class="photos">
       <div class="primary">
       {{#primaryImage}}
-        <img src="{{.}}" />
+        <img class="fadeable" src="{{.}}" />
       {{/images}}
       </div>
       <div class="secondary">
       {{#secondaryImages}}
-        <img src="{{.}}" />
+        <img class="fadeable" src="{{.}}" />
       {{/images}}
       </div>
     </div>
@@ -95,7 +97,9 @@
 
   </script>
   <script>
-    var ractive;
+    var ractive,
+        triggerStartTime = Date.now(),
+        minTriggerResetTimeMs = 3 * 1000;
 
     $.get('/config').then(initWithConfig);
 
@@ -122,7 +126,12 @@
         },
         data: {
           collectorBase: collectorBase,
-          isTriggering: false
+          isTriggering: false,
+          filterNoAps: function (data) {
+            return _.filter(data, function (d) {
+              return d.aps != '';
+            });
+          }
         }
       });
 
@@ -133,6 +142,7 @@
       function handleTrigger(msg) {
         console.log('TRIGGER', msg);
         ractive.set('isTriggering', true);
+        triggerStartTime = Date.now();
       }
 
       function handleRender(msg) {
@@ -142,7 +152,17 @@
             console.log('data', data);
             window.d = data;
             ractive.set(data);
-            ractive.set('isTriggering', false);
+
+            var renderInterval = Date.now() - triggerStartTime,
+                timeLeft = minTriggerResetTimeMs - renderInterval;
+
+            if (timeLeft <= 0) {
+              ractive.set('isTriggering', false);
+            } else {
+              setTimeout(function () {
+                ractive.set('isTriggering', false);
+              }, timeLeft);
+            }
           });
       }
 

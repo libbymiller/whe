@@ -8,6 +8,7 @@ html {
 
 body {
   color: #fff;
+  background-color: #000;
   text-rendering: optimizeLegibility;
   margin: 0;
 }
@@ -32,15 +33,12 @@ body {
   bottom: 90%;
   left: 0;
   right: 0;
-
-  color: #333;
-  background: #fff;
 }
 
 .masthead h1,
 .masthead .status {
   position: absolute;
-  top: 24px;
+  top: 12px;
   bottom: 0;
 
   font-size: 2rem;
@@ -91,6 +89,18 @@ body {
 }
 
 /*
+  Fade out
+*/
+[data-state='is-triggering'] .fadeable {
+  opacity: 0;
+}
+
+.fadeable {
+  -webkit-transition: opacity 1s ease-out;
+          transition: opacity 1s ease-out;
+}
+
+/*
   photos
 */
 .photos {
@@ -129,6 +139,8 @@ body {
 .photos .secondary img {
   margin-bottom: 1rem;
   height: 40vh;
+
+  border: 1px solid rgba(0, 0, 0, 0.4);
 }
 
 
@@ -137,7 +149,7 @@ body {
 */
 .metadata {
   position: absolute;
-  top: 10%;
+  top: 0;
   bottom: 0;
   left: 0;
   right: 33%;
@@ -158,9 +170,36 @@ body {
 .metadata dt {
   margin-top: 1em;
   text-transform: uppercase;
-  font-weight: bold;
 }
 
 .metadata dd {
   font-size: 2em;
+}
+
+/*
+  Layout metadata blocks
+*/
+.md {
+  /*border: 1px solid green;*/
+}
+.md-0 {
+  display: block;
+  width: 100%;
+}
+
+.md-1, .md-2 {
+  float: left;
+  width: 48%;
+  font-size: 1em;
+}
+
+.md-1 {
+  padding-right: 16px;
+}
+
+/*
+  Sizes
+*/
+.md-1 dd, .md-2 dd {
+  font-size: 1.7em;
 }
