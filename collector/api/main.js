@@ -117,8 +117,8 @@ app.get('/dashboard', function (req, res) {
 app.get('/state', function (req, res) {
   res.json({
     devices: metadata.length,
-    metadata: metadata.toJSON().map(sanitise),
-    images  : images.toJSON().slice(0, 10),
+    metadata: metadata.toJSON().slice(0, config.numDevicesToReturn).map(sanitise),
+    images  : images.toJSON(),
     latestImages : _.pluck(images.toJSON(), 'source').sort().map(latestImageUrl)
   });
 });

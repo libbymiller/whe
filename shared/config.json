@@ -21,5 +21,6 @@
   },
   "heartbeatIntervalSecs": 1,
   "maxNumSecsBeforeRender": 2,
-  "numItemsToWaitForBeforeRender": 2
+  "numItemsToWaitForBeforeRender": 2,
+  "numDevicesToReturn": 20
 }
