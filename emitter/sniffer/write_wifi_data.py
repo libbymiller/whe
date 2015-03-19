@@ -75,9 +75,8 @@ for line in fileinput.input():
             data = []
             count = 0
             for item in to_send_time:           
-             item_sm = item[0:7]
-             item_sm = item_sm.replace(":","-")
-             list_item = {'source':source,'id':item, 'time': to_send_time[item], 'power': to_send_power[item], 'aps': to_send_aps[item]}
+             item_ob = item[0:12]+"XX:XX"
+             list_item = {'source':source,'id':item_ob, 'time': to_send_time[item], 'power': to_send_power[item], 'aps': to_send_aps[item]}
              data.append(list_item)
             data_sorted = sorted(data, key=lambda k: k['power']) 
             all_data = {'data':data_sorted}
