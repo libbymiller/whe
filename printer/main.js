@@ -75,7 +75,7 @@ function handle(msg) {
     var msgPromise = fetchState()
 //                .then(fetchImage)
   //              .then(saveImage)
-                .then(imageToAscii)
+    //            .then(imageToAscii)
                 .then(writeFile)
                 .then(printFile)
                 .then(startPrintTimeout)
@@ -152,23 +152,20 @@ function saveImage(obj) {
 }
 
 function imageToAscii(obj) {
-  console.log('imageToAscii');
+  console.log('imageToAscii', obj.imagePath);
   return new Promise(function (resolve, reject) {
-    var img = obj.images[0].files[0].path;
-    console.log("image");
-    console.log(img);
-    if (img) {
-      exec([jp2a, '--width=80', '-i', img].join(' '), function (err, stdout) {
+    if (obj.imagePath) {
+      exec([jp2a, '--width=80', '-i', obj.imagePath].join(' '), function (err, stdout) {
         if (err) {
           reject(err);
         } else {
           obj.ascii = stdout;
         }
-        fs.unlink(img);
+        fs.unlink(obj.imagePath);
         resolve(obj);
       });
     } else {
-      reject(new Error('imageToAscii(): img found'));
+      reject(new Error('imageToAscii(): obj.imagePath found'));
     }
   })
 }
@@ -179,8 +176,8 @@ function writeFile(params) {
   console.log(params);
 //  var metadata_structure = params.msg.metadata[0];//frst only
   var metadata_structure = params.metadata[0];//frst only
-//  console.log("metadata_structure");
-//  console.log(metadata_structure);
+  console.log("metadata_structure");
+  console.log(metadata_structure);
 
   var source = metadata_structure.source;
   var aps = metadata_structure.aps;
@@ -217,8 +214,8 @@ function writeFile(params) {
   console.log('Construct print file');
 //  console.log(header + contents);
   return new Promise(function (resolve, reject) {
-    obj.printFile = header + contents + '\n\n\n\n' + obj.ascii;
-//    obj.printFile = header + contents;
+//    obj.printFile = header + contents + '\n\n\n\n' + obj.ascii;
+    obj.printFile = header + contents;
     resolve(obj);
   });
 }
