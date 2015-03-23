@@ -6,7 +6,7 @@
   "trigger": {
     "triggerPin": 16,
     "echoPin": 18,
-    "distanceThresholdCm": 100,
+    "distanceThresholdCm": 150,
     "logDistance": false
   },
   "printer": {
