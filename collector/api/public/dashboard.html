@@ -20,6 +20,8 @@
     <div class="row">
       <h2>Triggers</h2>
       <button onclick="trigger()" class="button-primary">Trigger</button>
+      <button onclick="reloadScreen()" class="button-primary">Reload web screen</button>
+      <h2>Dummy data</h2>
       <button onclick="postMetadata('sniffersnapper')">POST /metadata (sniffersnapper)</button>
       <button onclick="postMetadata('moz2')">POST /metadata (moz2)</button>
       <button onclick="postMetadataWithFriends()">POST /metadata with friends</button>
@@ -81,6 +83,7 @@
     var config = $.get('/config').then(initWithConfig),
         heartbeatsUi,
         trigger,
+        reloadScreen,
         postMetadata,
         postMetadataWithFriends,
         postMetadataCapture;
@@ -141,6 +144,14 @@
       trigger = function () {
         client.publish('/trigger', {})
           .then(success, fail);
+      }
+
+      reloadScreen = function () {
+        var shouldReload = confirm('Do you want to reload the tablet screen?');
+        if (shouldReload) {
+          client.publish('/reload', {})
+            .then(success, fail);
+        }
       }
 
       // 80:E6:50:06:D8:34

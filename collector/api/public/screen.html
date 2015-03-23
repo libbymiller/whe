@@ -159,6 +159,7 @@
       });
 
       client.subscribe('/trigger', handleTrigger);
+      client.subscribe('/reload', handleReload);
       client.subscribe('/render', handleRender);
       handleRender({}); // Initial render
 
@@ -166,6 +167,11 @@
         console.log('TRIGGER', msg);
         ractive.set('isTriggering', true);
         triggerStartTime = Date.now();
+      }
+
+      function handleReload(msg) {
+        console.log('RELOAD', msg);
+        window.location.reload(false);
       }
 
       function handleRender(msg) {
