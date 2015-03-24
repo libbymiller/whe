@@ -3,7 +3,7 @@ var AmpersandCollection = require('ampersand-collection');
 var Metadata = AmpersandCollection.extend({
   mainIndex: 'id',
   comparator: function (a,b) {
-    return b.power - a.power;
+    return b.time - a.time;
   }
 });
 
