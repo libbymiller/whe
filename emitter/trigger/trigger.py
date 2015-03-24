@@ -6,7 +6,6 @@ import time
 import math
 
 import httplib
-import urllib
 
 import RPi.GPIO as GPIO
 
@@ -28,7 +27,7 @@ distance_threshold_cm = config['trigger']['distanceThresholdCm']
 
 
 def log(msg):
-    print msg
+    print(msg)
     sys.stdout.flush()
 
 
@@ -119,8 +118,7 @@ def send_trigger_message():
         conn.request("POST", "/faye", msg, headers)
         response = conn.getresponse()
         log(str(response.status) + " " + response.reason)
-        data = response.read()
-    except httplib.HTTPException as e:
+    except httplib.HTTPException:
         log("Error making HTTP request")
     finally:
         conn.close()

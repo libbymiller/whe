@@ -5,18 +5,15 @@
 
 import fileinput
 import re
-import subprocess
 import os
-import glob
 import time
 import sys
 import socket
-import urllib
 import json
 
 source = socket.gethostname()
 
-print source
+print(source)
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -26,7 +23,7 @@ config = json.loads(config_file)
 
 data_file_path = config["sniffer"]["dataFilename"]
 
-print "Will save data to: " + data_file_path
+print("Will save data to: " + data_file_path)
 
 to_send_power = {}
 to_send_time = {}
@@ -53,47 +50,47 @@ for line in fileinput.input():
                 aps = arr[10].strip()
                 # sys.stdout.write( "aps "+ aps)
 
-        this_id = str(arr[1].strip())
-        tt = int(time.time())
+            this_id = str(arr[1].strip())
+            tt = int(time.time())
 
-        if(power != "" and int(power) > power_threshold and int(power) != -1):
-            if (this_id in exclusions):
-                # print "do nothing, excluded"
-                sys.stdout.write('-')
-            else:
-                sys.stdout.write('.')
-                # print "found "+str(this_id)+" power "+str(power)
-                # print "updating last seen anything to "+str(tt)
-                to_send_power[this_id] = str(power)
-                to_send_time[this_id] = str(tt)
-                to_send_aps[this_id] = str(aps)
-                last_seen_anything = tt
+            if(power != "" and int(power) > power_threshold and int(power) != -1):
+                if (this_id in exclusions):
+                    # print("do nothing, excluded")
+                    sys.stdout.write('-')
+                else:
+                    sys.stdout.write('.')
+                    # print("found "+str(this_id)+" power "+str(power))
+                    # print("updating last seen anything to "+str(tt))
+                    to_send_power[this_id] = str(power)
+                    to_send_time[this_id] = str(tt)
+                    to_send_aps[this_id] = str(aps)
+                    last_seen_anything = tt
 
-        if(len(to_send_power) > 0 and int(time.time()) - last_time_seen > 10):
+            if(len(to_send_power) > 0 and int(time.time()) - last_time_seen > 10):
 
-            # send data every few seconds, to make sure we capture multiple
-            # devices
-            if(int(time.time()) - last_seen_anything < time_threshold):
-                print "\nsaving data because " + str(time.time() - last_seen_anything)
-                data = []
-                count = 0
-                for item in to_send_time:
-                    item_ob = item[0:12] + "XX:XX"
-                    list_item = {'source': source, 'id': item_ob, 'time': to_send_time[
-                        item], 'power': to_send_power[item], 'aps': to_send_aps[item]}
-                    data.append(list_item)
-                data_sorted = sorted(data, key=lambda k: k['power'])
-                all_data = {'data': data_sorted}
-                data_str = json.dumps(all_data)
+                # send data every few seconds, to make sure we capture multiple
+                # devices
+                if(int(time.time()) - last_seen_anything < time_threshold):
+                    print("\nsaving data because " + str(time.time() - last_seen_anything))
+                    data = []
+                    count = 0
+                    for item in to_send_time:
+                        item_ob = item[0:12] + "XX:XX"
+                        list_item = {'source': source, 'id': item_ob, 'time': to_send_time[
+                            item], 'power': to_send_power[item], 'aps': to_send_aps[item]}
+                        data.append(list_item)
+                    data_sorted = sorted(data, key=lambda k: k['power'])
+                    all_data = {'data': data_sorted}
+                    data_str = json.dumps(all_data)
 
-                # save the data
-                file_ = open(data_file_path, 'w')
-                file_.write(data_str)
-                file_.close()
+                    # save the data
+                    file_ = open(data_file_path, 'w')
+                    file_.write(data_str)
+                    file_.close()
 
-          # update time last seen something
-          last_time_seen = int(time.time())
+                # update time last seen something
+                last_time_seen = int(time.time())
 
-    except Exception, e:
-        print e
-        pass
+        except Exception as e:
+            print(e)
+            pass
