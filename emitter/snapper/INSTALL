@@ -1,0 +1,29 @@
+If you want to recompile it:
+
+cd /opt/vc
+sudo git clone https://github.com/raspberrypi/userland.git
+
+sudo apt-get install cmake
+
+cd /opt/vc/userland 
+sudo chown -R pi:pi .
+sed -i 's/DEFINED CMAKE_TOOLCHAIN_FILE/NOT DEFINED CMAKE_TOOLCHAIN_FILE/g' makefiles/cmake/arm-linux.cmake
+
+sudo mkdir build
+cd build
+sudo cmake -DCMAKE_BUILD_TYPE=Release ..
+sudo make
+sudo make install
+
+sudo apt-get install libopencv-dev python-opencv
+
+cd
+cp -r /opt/vc/userland/host_applications/linux/apps/raspicam/*  whe/emitter/snapper/
+
+mv CMakeLists.txt.snapper CMakeLists.txt
+
+cmake .
+make
+./camcv_vid3.cpp
+
+

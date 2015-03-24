@@ -1,3 +1,5 @@
+Except where otherwise noted, license is Apache 2 (see LICENSE in this directory)
+
 # whe
 
 There are two types of devices in the project, `collectors` and `emitters`.
