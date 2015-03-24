@@ -199,23 +199,37 @@ function writeFile(params) {
     }
   }
 
-  var header = '-------------------------------------------------------------------------------';
-  var contents = '\nPerson number '+counter+' located:\n';
+  var a_line = '-------------------------------------------------------------------------------';
+  var header = '===============================================================================\n           Walls Have Eyes is watching you at the Design Museum\n';
+   header = header + a_line+ '\n';
   counter = counter+1
+  var contents = '';
+  contents = contents + 'id:'+id+'|';
   if(shortName){
-    contents = contents + shortName + ' user\n';
+    contents = contents +'brand:'+ shortName+'|';
   }
-  contents = contents + 'Tracking identifier '+id;
   if(aps && aps!=""){
-    contents = contents + '\nKnown networks '+aps+'\n';
+    contents = contents + '\nknown networks:'+aps+'|';
   }
-  contents = contents + '\nKnown associates '+friends_arr.join(",")+'\n';
+  //contents = contents + '\nKnown associates '+friends_arr.join(",")+'\n';
+  var len = contents.length;
+  var spaces_length = 0;
+  if(len < 60){
+   spaces_length = (60 - len)/2;
+   var spaces_str = '';
+   for(var i=0;i< spaces_length; i++){
+     spaces_str = spaces_str + ' ';
+   }
+   contents = spaces_str + contents;
+  }else{
+   contents = contents.substring(0,60);
+  }
 
   console.log('Construct print file');
 //  console.log(header + contents);
   return new Promise(function (resolve, reject) {
 //    obj.printFile = header + contents + '\n\n\n\n' + obj.ascii;
-    obj.printFile = header + contents;
+    obj.printFile = header + contents + '\n'+a_line+'\n';
     resolve(obj);
   });
 }
