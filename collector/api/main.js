@@ -231,7 +231,7 @@ app.get('/image/:name', function (req, res) {
 });
 
 function rejectSize0(f) {
-  return !!f.size;
+  return f.size != null && f.size > 0;
 }
 
 function addCollectorUrl(f) {
