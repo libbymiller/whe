@@ -120,7 +120,7 @@ def send_trigger_message():
         response = conn.getresponse()
         log(str(response.status) + " " + response.reason)
         data = response.read()
-    except httplib.HTTPException, e:
+    except httplib.HTTPException as e:
         log("Error making HTTP request")
     finally:
         conn.close()
@@ -152,12 +152,12 @@ while True:
     if distance < distance_threshold_cm:
         log("Within distance threshold")
     # ... and not in triggered state
-    if has_triggered == False:
+    if not has_triggered:
         log("Triggering")
         send_trigger_message()
         has_triggered = True
     # else outside of distance threshold and in triggered state
-    elif has_triggered == True:
+    elif has_triggered:
         log("Outside of distance threshold...reset")
         has_triggered = False
 
