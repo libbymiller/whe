@@ -59,7 +59,7 @@ create RAM disks for relevant paths:
 
 copy image deletion script to cron:
 
-    sudo cp collector/whe-delete-images.sh /etc/cron.hourly/
+    sudo cp collector/whe-delete-images.sh /etc/cron.hourly/whe-delete-images
 
 restart, then run:
 
