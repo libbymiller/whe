@@ -1,4 +1,6 @@
-Collector (including printer)
+---
+
+Basics
 --
 
 provision a card:
@@ -10,181 +12,161 @@ provision a card:
 then
 
     sudo raspi-config
-    expand file system
+    expand file system, enable camera
 
 reboot
 
+    sudo apt-get remove --purge wolfram-engine 
     sudo apt-get update && sudo apt-get upgrade -y
 
-install avahi and node
 
-    git clone https://github.com/radiodan/provision
+---
+
+Broadcast AP
+--
+
+install AP
+
+    git clone https://github.com/radiodan/provision.git
     cd provision
-    sudo ./provision avahi node
 
-change its name to "collector"
+replace the contents of steps/wpa/install.sh
 
-    sudo pico /etc/hosts
-    sudo pico /etc/hostname
+with
 
-    sudo gem install foreman --no-ri --no-rdoc
+    sudo apt-get install -y --force-yes dnsmasq && \
+    sudo apt-get install -y --force-yes ruby1.9.1-dev hostapd=1:1.0-3+deb7u1 wpasupplicant && \
+    sudo gem install --no-ri --no-rdoc wpa_cli_web
 
-install whe
+then
 
-    cd
-    git clone https://github.com/libbymiller/whe
-    cd whe
-    npm install
+    sudo mkdir /var/log/radiodan
+    sudo LOG_LEVEL=DEBUG ./provision avahi nginx wpa
 
-try it
+reboot
+unplug ethernet if plugged in
+connect to radiodan-configuation to check it works
 
-    foreman start -p 3000 -f collector/Procfile
-
-stop it
-
-install supervisord for process management
-
-    sudo apt-get install supervisor -y
-
-    sudo cp shared/supervisor.conf /etc/init.d/supervisor
-    sudo cp collector/collector_supervisor.conf /etc/supervisor/conf.d/collector.conf
-    sudo cp printer/printer_supervisor.conf /etc/supervisor/conf.d/printer.conf
-
-    # Remove existing scripts
-    sudo update-rc.d collector remove
-
-create RAM disks for relevant paths:
-
-    sudo cat shared/fstab >> /etc/fstab
-
-copy image deletion script to cron:
-
-    sudo cp collector/whe-delete-images.sh /etc/cron.hourly/whe-delete-images
-
-restart, then run:
-
-    sudo supervisorctl reload
-
+plug ethernet in again and ssh in
 
 ---
 
 Snapper
 --
 
-provision a card:
+install node
 
-    diskutil list
-    diskutil unmountDisk /dev/diskn
-    sudo dd bs=1m if=~/Downloads/2015-01-31-raspbian.img of=/dev/diskn
-
-
-    sudo raspi-config
-    expand file system
-    enable camera
-
-reboot
-
-    sudo apt-get remove --purge wolfram-engine
-    sudo apt-get update && sudo apt-get upgrade -y
-
-
-install avahi and node
-
-    git clone https://github.com/radiodan/provision
+    cd
     cd provision
-    sudo ./provision avahi node
+    sudo LOG_LEVEL=DEBUG ./provision node
 
-change its name to "snapper1"
+install prerequisites
+
+    sudo apt-get install libopencv-dev python-opencv -y
+    sudo apt-get install libcurl4-openssl-dev -y
+
+change its name if you like
 
     sudo pico /etc/hosts
     sudo pico /etc/hostname
-
-install foreman in case you want to test it locally
-
-    sudo gem install foreman --no-ri --no-rdoc
 
 install whe
 
     cd
     git clone https://github.com/libbymiller/whe
+
     cd whe
+    git fetch origin
+    git checkout -b test origin/surveillanceowl
     npm install
-
-
-    sudo apt-get install libopencv-dev python-opencv
-
-    cd
-    cd whe/emitter
-
-test it if you like:
-
-uncomment snapper in Procfile, then
-
-    foreman start
-
-then kill it (control-C)
 
 install supervisord for process management
 
-    sudo apt-get install supervisor
+    sudo update-rc.d dnsmasq defaults
+    sudo update-rc.d dnsmasq enable
 
-    sudo cp emitter/snapper/snapper_supervisor.conf /etc/supervisor/conf.d/snapper.conf
+    sudo apt-get install supervisor -y
 
-    sudo cp emitter/sender/image_sender_supervisor.conf /etc/supervisor/conf.d/image-sender.conf
+    sudo cp shared/supervisor.conf /etc/init.d/supervisor
+    sudo cp collector/collector_supervisor.conf /etc/supervisor/conf.d/collector.conf
 
-    # Remove existing scripts
-    sudo update-rc.d snapper remove
-    sudo update-rc.d image-sender remove
 
-create RAM disks for relevant paths:
+---
 
-    sudo cat shared/fstab >> /etc/fstab
-
-restart, then run:
-
-    sudo supervisorctl reload
-
-----
-
-sniffer
+Collector
 --
 
-provision a card:
+    cd
+    cd whe
+    sudo cp shared/supervisor.conf /etc/init.d/supervisor
+    sudo cp collector/collector_supervisor.conf /etc/supervisor/conf.d/collector.conf
 
-    diskutil list
-    diskutil unmountDisk /dev/diskn
-    sudo dd bs=1m if=~/Downloads/2015-01-31-raspbian.img of=/dev/diskn
 
-    sudo raspi-config
+edit /etc/nginx/sites-enabled/wpa_cli_web_redirect
 
-expand file system
+    upstream debug {
+      server 127.0.0.1:3000 max_fails=0;
+    }
 
-reboot
 
-    sudo apt-get remove --purge wolfram-engine
-    sudo apt-get update && sudo apt-get upgrade -y
+edit  /opt/radiodan/adhoc/try_adhoc_network
 
-install avahi and node
+to remove
 
-    git clone https://github.com/radiodan/provision
-    cd provision
-    sudo ./provision avahi node
+    # Do 6 scans over 1 min
+    #for i in {1..6}
+    #do
+    #  echo "Scan $i of 6"
+    #  /sbin/wpa_cli scan
+    #  /bin/sleep 10
+    #done
 
-change its name to "sniffer"
+remove wpa server
 
-    sudo pico /etc/hosts
-    sudo pico /etc/hostname
+    sudo update-rc.d wpa_cli_web remove
+    sudo update-rc.d wpa-conf-copier remove
 
-    sudo gem install foreman --no-ri --no-rdoc
+edit /opt/radiodan/static/status511.html to say what you want 
+
+reboot and test by connecting to the network and opening a browser, making sure you unplug ethernet
+
+---
+
+Recompiling snapper
+--
+
+(you may not need to)
+
+    sudo apt-get install cmake
+
+    cd /opt/vc/userland 
+    sudo chown -R pi:pi .
+    sed -i 's/DEFINED CMAKE_TOOLCHAIN_FILE/NOT DEFINED CMAKE_TOOLCHAIN_FILE/g' makefiles/cmake/arm-linux.cmake
+
+    sudo mkdir build
+    cd build
+    sudo cmake -DCMAKE_BUILD_TYPE=Release ..
+    sudo make
+    sudo make install
 
     cd
-    git clone https://github.com/libbymiller/whe
-    cd whe
-    npm install
+    cd whe/emitter/snapper/
+    cp -r /opt/vc/userland/host_applications/linux/apps/raspicam/*  .
+
+    cp CMakeLists.txt.snapper CMakeLists.txt
+
+    cmake .
+    make
+
+
+---
+
+Sniffer
+--
 
 install prerequisites
 
-    sudo apt-get install libnl-dev libssl-dev iw avahi-daemon ntpdate
+    sudo apt-get install libnl-dev libssl-dev iw 
 
 install airodump-ng
 
@@ -194,69 +176,9 @@ install airodump-ng
     make
     sudo make install
 
-install supervisord for process management
+    cd
+    cd whe
 
-    sudo apt-get install supervisor -y
-
-    sudo cp shared/supervisor.conf /etc/init.d/supervisor
     sudo cp emitter/sniffer/sniffer_supervisor.conf /etc/supervisor/conf.d/sniffer.conf
     sudo cp emitter/sender/metadata_sender_supervisor.conf /etc/supervisor/conf.d/metadata-sender.conf
 
-
-create RAM disks for relevant paths:
-
-    sudo cat shared/fstab >> /etc/fstab
-
-restart, then run:
-
-    sudo supervisorctl reload
-
-----
-
-Trigger
---
-
-provision a card:
-
-    diskutil list
-    diskutil unmountDisk /dev/diskn
-    sudo dd bs=1m if=~/Downloads/2015-01-31-raspbian.img of=/dev/diskn
-
-
-    sudo raspi-config
-expand file system
-
-reboot
-
-    sudo apt-get update && sudo apt-get upgrade -y
-
-change its name to "trigger"
-
-    sudo pico /etc/hosts
-    sudo pico /etc/hostname
-
-install avahi
-
-    git clone https://github.com/radiodan/provision
-    cd provision
-    sudo ./provision avahi
-
-install whe
-
-    git clone https://github.com/libbymiller/whe
-    cd whe
-
-install supervisord for process management
-
-    sudo apt-get install supervisor -y
-
-    sudo cp shared/supervisor.conf /etc/init.d/supervisor
-    sudo cp emitter/trigger/trigger_supervisor.conf /etc/supervisor/conf.d/trigger.conf
-
-create RAM disks for relevant paths:
-
-    sudo cat shared/fstab >> /etc/fstab
-
-restart, then run:
-
-    sudo supervisorctl reload
