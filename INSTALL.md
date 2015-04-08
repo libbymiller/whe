@@ -43,15 +43,74 @@ then
     sudo mkdir /var/log/radiodan
     sudo LOG_LEVEL=DEBUG ./provision avahi nginx wpa
 
+change name of network
+
+    sudo pico /etc/hostapd/hostapd.conf                                                
+
+change ssid to
+
+    ssid=surveillanceowl
+
 reboot
 unplug ethernet if plugged in
-connect to radiodan-configuation to check it works
+connect to surveillanceowl to check it works
 
 plug ethernet in again and ssh in
 
 ---
 
-Snapper
+Edit the AP to point at collector
+--
+
+
+edit /etc/nginx/sites-enabled/wpa_cli_web_redirect
+
+    upstream debug {
+      server 127.0.0.1:3000 max_fails=0;
+    }
+
+
+edit  /opt/radiodan/adhoc/try_adhoc_network
+
+to remove
+
+    # Do 6 scans over 1 min
+    #for i in {1..6}
+    #do
+    #  echo "Scan $i of 6"
+    #  /sbin/wpa_cli scan
+    #  /bin/sleep 10
+    #done
+
+and
+
+    #echo "Starting wpa-cli-web"
+    #/etc/init.d/wpa-cli-web start
+
+remove wpa server from init.d
+
+    sudo update-rc.d wpa_cli_web remove
+    sudo update-rc.d wpa-conf-copier remove
+
+edit /opt/radiodan/static/status511.html to say what you want in the captive portal popup
+
+
+---
+
+Install Collector
+--
+
+    cd
+    cd whe
+    sudo cp shared/supervisor.conf /etc/init.d/supervisor
+    sudo cp collector/collector_supervisor.conf /etc/supervisor/conf.d/collector.conf
+
+reboot and test by connecting to the network and opening a browser, making sure you unplug ethernet
+
+
+---
+
+Install Snapper
 --
 
 install node
@@ -93,45 +152,6 @@ install supervisord for process management
 
 ---
 
-Collector
---
-
-    cd
-    cd whe
-    sudo cp shared/supervisor.conf /etc/init.d/supervisor
-    sudo cp collector/collector_supervisor.conf /etc/supervisor/conf.d/collector.conf
-
-
-edit /etc/nginx/sites-enabled/wpa_cli_web_redirect
-
-    upstream debug {
-      server 127.0.0.1:3000 max_fails=0;
-    }
-
-
-edit  /opt/radiodan/adhoc/try_adhoc_network
-
-to remove
-
-    # Do 6 scans over 1 min
-    #for i in {1..6}
-    #do
-    #  echo "Scan $i of 6"
-    #  /sbin/wpa_cli scan
-    #  /bin/sleep 10
-    #done
-
-remove wpa server
-
-    sudo update-rc.d wpa_cli_web remove
-    sudo update-rc.d wpa-conf-copier remove
-
-edit /opt/radiodan/static/status511.html to say what you want 
-
-reboot and test by connecting to the network and opening a browser, making sure you unplug ethernet
-
----
-
 Recompiling snapper
 --
 
@@ -161,7 +181,7 @@ Recompiling snapper
 
 ---
 
-Sniffer
+Install Sniffer
 --
 
 install prerequisites
@@ -182,3 +202,12 @@ install airodump-ng
     sudo cp emitter/sniffer/sniffer_supervisor.conf /etc/supervisor/conf.d/sniffer.conf
     sudo cp emitter/sender/metadata_sender_supervisor.conf /etc/supervisor/conf.d/metadata-sender.conf
 
+
+---
+
+Debugging
+--
+
+logs:
+
+    sudo tail -f /var/log/supervisor/*
