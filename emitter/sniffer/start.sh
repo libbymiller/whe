@@ -4,8 +4,8 @@ sudo killall airodump-ng
 
 # start up airmon and airodump
 
-sudo airmon-ng check kill;
-sudo airmon-ng start wlan0;
+#sudo airmon-ng check kill;
+sudo airmon-ng start wlan1;
 
 # sort out the networking to attach to known wifi networks on the other card
 #sudo  wpa_supplicant -B -iwlan1 -c/etc/wpa_supplicant.conf -Dwext && dhclient wlan1;

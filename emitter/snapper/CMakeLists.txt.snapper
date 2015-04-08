@@ -26,5 +26,6 @@ target_link_libraries(camcv_vid3 /opt/vc/lib/libmmal_core.so
 /opt/vc/lib/libGLESv2.so
 /opt/vc/lib/libEGL.so
 ${OpenCV_LIBS}
+/usr/lib/arm-linux-gnueabihf/libcurl.so
 pthread
 -lm)

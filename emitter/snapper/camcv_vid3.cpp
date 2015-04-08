@@ -29,6 +29,8 @@
 #include <highgui.h>
 #include "time.h"
 
+#include <curl/curl.h>
+
 extern "C" {
         #include "bcm_host.h"
         #include "interface/vcos/vcos.h"
@@ -113,7 +115,7 @@ const int MAX_BITRATE = 30000000; // 30Mbits/s
 
 // variable to convert I420 frame to IplImage
 int nCount=0;
-IplImage *py, *pu, *pv, *pu_big, *pv_big, *image,* dstImage;
+IplImage *py, *pu, *pv, *pu_big, *pv_big, *image,* dstImage, *pylast, *pydiff;
 
 
 int mmal_status_to_int(MMAL_STATUS_T status);
@@ -180,12 +182,16 @@ static void default_status(RASPIVID_STATE *state)
 
    // Now set anything non-zero
    state->timeout                       = 65000;     // capture time : here 65 s
-   state->width                         = 320;      // use a multiple of 320 (640, 1280)
-   state->height                        = 240;          // use a multiple of 240 (480, 960)
+//   state->width                         = 320;      // use a multiple of 320 (640, 1280)
+//   state->height                        = 240;          // use a multiple of 240 (480, 960)
+
+   state->width                         = 640;      // use a multiple of 320 (640, 1280)
+   state->height                        = 480;          // use a multiple of 240 (480, 960)
+
    state->bitrate                       = 17000000; // This is a decent default bitrate for 1080p
    state->framerate             = VIDEO_FRAME_RATE_NUM;
    state->immutableInput        = 1;
-      state->graymode                      = 1;            //gray by default, much faster than color (0), mandatory for face reco
+   state->graymode                      = 1;            //gray by default, much faster than color (0), mandatory for face reco
 
    // Setup preview window defaults
    raspipreview_set_defaults(&state->preview_parameters);
@@ -194,6 +200,40 @@ static void default_status(RASPIVID_STATE *state)
    raspicamcontrol_set_defaults(&state->camera_parameters);
 }
 
+
+
+
+/**
+ * http post to faye
+*/
+
+void curl_post()
+{
+  CURL *curl;
+  CURLcode res;
+  char *data = "{\"channel\":\"/trigger\",\"data\":{}}";
+  struct curl_slist *headers=NULL;
+  headers = curl_slist_append(headers, "Content-Type: application/json");
+
+  curl = curl_easy_init();
+
+
+  if(curl) {
+
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+    curl_easy_setopt(curl, CURLOPT_URL, "http://10.0.0.200:3000/faye");
+
+    res = curl_easy_perform(curl);
+    if(res != CURLE_OK)
+      fprintf(stderr, "curl_easy_perform() failed: %s\n",
+              curl_easy_strerror(res));
+
+    curl_easy_cleanup(curl);
+  }
+
+// return 0;
+}
 
 
 /**
@@ -221,31 +261,51 @@ static void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffe
                 int h=pData->pstate->height;
                 int h4=h/4;
                 memcpy(py->imageData,buffer->data,w*h); // read Y
-                        // for face reco, we just keep gray channel, py
-                        gray=cvarrToMat(py);
-                        //cvShowImage("camcvWin", py); // display only gray channel
+                // for face reco, we just keep gray channel, py
+
+////// movement detection
+
+                if(!pylast){
+                  cvCopy(py, pylast, NULL);
+                }
+                cvSub(pylast, py, pydiff, NULL);
+                cvErode(pydiff, pydiff, NULL, 1);
+                cvCanny(pydiff, pydiff, 20, 60, 3);
+                int n = cvCountNonZero(pydiff);
+
+                if(n>1000){
+                  fprintf(stdout, "MOTION DETECTED (%d)\n", n);
+                  curl_post();
+                  sleep(1);
+                }
+
+                cvCopy(py, pylast, NULL);
+
+                gray=cvarrToMat(py);
+
+                //cvShowImage("camcvWin", py); // display only gray channel
+
+
+
 ////////////////////////////////
 // FACE RECOGNITION START HERE
 ////////////////////////////////
 
-        // detect faces
-        face_cascade.detectMultiScale(gray, faces, 1.1, 3, CV_HAAR_SCALE_IMAGE, Size(80,80));
-        if(faces.size()>0){
-            trace("found faces");
-        }else{
-//            trace("NO faces");
-        }
+                // detect faces
+                face_cascade.detectMultiScale(gray, faces, 1.1, 3, CV_HAAR_SCALE_IMAGE, Size(80,80));
+                if(faces.size()>0){
+                   trace("found faces");
+                }else{
+//                 trace("NO faces");
+                }
 
 
-
-	for(int i = 0; i < faces.size(); i++) 
-	{       
-		// crop face (pretty easy with opencv, don't you think ? 
-		Rect face_i = faces[i];
-		
-		face = gray(face_i);  
-		//  resized face and display it
-		cv::resize(face, face_resized, Size(im_width, im_height), 1.0, 1.0, CV_INTER_NN); //INTER_CUBIC);		
+                for(int i = 0; i < faces.size(); i++) {
+		  // crop face (pretty easy with opencv, don't you think ? 
+                  Rect face_i = faces[i];
+                  face = gray(face_i);  
+                  //resized face and display it
+                  cv::resize(face, face_resized, Size(im_width, im_height), 1.0, 1.0, CV_INTER_NN); //INTER_CUBIC);		
 
                 // convert to colour to display a green box on top
                 // read image
@@ -383,7 +443,7 @@ static MMAL_COMPONENT_T *create_camera_component(RASPIVID_STATE *state)
         status = mmal_port_enable(video_port, video_buffer_callback);
         if (status)
         {
-             vcos_log_error("camera video callback2 error");
+           vcos_log_error("camera video callback2 error");
            goto error;
         }
 
@@ -541,6 +601,8 @@ static void signal_handler(int signal_number)
    exit(255);
 }
 
+
+
 /**
  * main
  */
@@ -558,7 +620,7 @@ int main(int argc, const char **argv)
                         cout <<"(E) face cascade model not loaded :"+fn_haar+"\n";
                         return -1;
         }
-    trace("(init) Load model : ok");
+        trace("(init) Load model : ok");
 
 /////////////////////////////////
 // END OF FACE RECO INIT
@@ -594,6 +656,11 @@ int main(int argc, const char **argv)
         pv = cvCreateImage(cvSize(w/2,h/2), IPL_DEPTH_8U, 1);   // V component of YUV I420 frame
         pu_big = cvCreateImage(cvSize(w,h), IPL_DEPTH_8U, 1);
         pv_big = cvCreateImage(cvSize(w,h), IPL_DEPTH_8U, 1);
+
+        pylast = cvCreateImage(cvSize(w,h), IPL_DEPTH_8U, 1);
+        pydiff = cvCreateImage(cvSize(w,h), IPL_DEPTH_8U, 1);
+
+
         image = cvCreateImage(cvSize(w,h), IPL_DEPTH_8U, 3);    // final picture to display
 
 
@@ -625,11 +692,11 @@ int main(int argc, const char **argv)
                 // assign data to use for callback
                 camera_video_port->userdata = (struct MMAL_PORT_USERDATA_T *)&callback_data;
 
-        // init timer
+                // init timer
                 time(&timer_begin);
 
 
-       // start capture
+                // start capture
                 if (mmal_port_parameter_set_boolean(camera_video_port, MMAL_PARAMETER_CAPTURE, 1) != MMAL_SUCCESS)
                 {
                         return 0;
