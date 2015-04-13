@@ -16,7 +16,7 @@ then
 
 reboot
 
-    sudo apt-get remove --purge wolfram-engine 
+    sudo apt-get remove --purge wolfram-engine -y
     sudo apt-get update && sudo apt-get upgrade -y
 
 
