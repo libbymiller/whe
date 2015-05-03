@@ -140,6 +140,25 @@ reboot and test by connecting to the network and opening a browser, making sure 
 Install Snapper
 --
 
+(if you've not done it already)
+
+install node
+
+    cd
+    cd provision
+    sudo LOG_LEVEL=DEBUG ./provision node
+
+install whe
+
+    cd
+    git clone https://github.com/libbymiller/whe
+
+    cd whe
+    git fetch origin
+    git checkout -b surveillanceowl origin/surveillanceowl
+    npm install
+    
+
 install prerequisites
 
     sudo apt-get install libopencv-dev python-opencv -y
@@ -148,8 +167,10 @@ install prerequisites
 
 add to supervisor
 
+    cd
+    cd whe
     sudo cp shared/supervisor.conf /etc/init.d/supervisor
-    sudo cp collector/collector_supervisor.conf /etc/supervisor/conf.d/collector.conf
+    sudo cp emitter/snapper/snapper_supervisor.conf /etc/supervisor/conf.d/snapper.conf
 
 
 ---
