@@ -171,6 +171,7 @@ add to supervisor
     cd whe
     sudo cp shared/supervisor.conf /etc/init.d/supervisor
     sudo cp emitter/snapper/snapper_supervisor.conf /etc/supervisor/conf.d/snapper.conf
+    sudo cp emitter/sender/image_sender_supervisor.conf /etc/supervisor/conf.d/image-sender.conf
 
 
 ---
