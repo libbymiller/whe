@@ -94,11 +94,32 @@ remove wpa server from init.d
 
 edit /opt/radiodan/static/status511.html to say what you want in the captive portal popup
 
+change its name if you like
+
+    sudo pico /etc/hosts
+    sudo pico /etc/hostname
 
 ---
 
 Install Collector
 --
+
+install whe
+
+    cd
+    git clone https://github.com/libbymiller/whe
+
+    cd whe
+    git fetch origin
+    git checkout -b test origin/surveillanceowl
+    npm install
+
+install supervisord for process management
+
+    sudo update-rc.d dnsmasq defaults
+    sudo update-rc.d dnsmasq enable
+
+    sudo apt-get install supervisor -y
 
     cd
     cd whe
@@ -124,27 +145,8 @@ install prerequisites
     sudo apt-get install libopencv-dev python-opencv -y
     sudo apt-get install libcurl4-openssl-dev -y
 
-change its name if you like
 
-    sudo pico /etc/hosts
-    sudo pico /etc/hostname
-
-install whe
-
-    cd
-    git clone https://github.com/libbymiller/whe
-
-    cd whe
-    git fetch origin
-    git checkout -b test origin/surveillanceowl
-    npm install
-
-install supervisord for process management
-
-    sudo update-rc.d dnsmasq defaults
-    sudo update-rc.d dnsmasq enable
-
-    sudo apt-get install supervisor -y
+add to supervisor
 
     sudo cp shared/supervisor.conf /etc/init.d/supervisor
     sudo cp collector/collector_supervisor.conf /etc/supervisor/conf.d/collector.conf
