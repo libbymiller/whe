@@ -104,6 +104,12 @@ change its name if you like
 Install Collector
 --
 
+install node
+
+    cd
+    cd provision
+    sudo LOG_LEVEL=DEBUG ./provision node
+
 install whe
 
     cd
@@ -115,9 +121,6 @@ install whe
     npm install
 
 install supervisord for process management
-
-    sudo update-rc.d dnsmasq defaults
-    sudo update-rc.d dnsmasq enable
 
     sudo apt-get install supervisor -y
 
@@ -133,12 +136,6 @@ reboot and test by connecting to the network and opening a browser, making sure 
 
 Install Snapper
 --
-
-install node
-
-    cd
-    cd provision
-    sudo LOG_LEVEL=DEBUG ./provision node
 
 install prerequisites
 
