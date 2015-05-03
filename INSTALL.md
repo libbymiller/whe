@@ -117,7 +117,7 @@ install whe
 
     cd whe
     git fetch origin
-    git checkout -b test origin/surveillanceowl
+    git checkout -b surveillanceowl origin/surveillanceowl
     npm install
 
 install supervisord for process management
