@@ -6,7 +6,7 @@ provision a card:
 
     diskutil list
     diskutil unmountDisk /dev/diskn
-    sudo dd bs=1m if=~/Downloads/2015-01-31-raspbian.img of=/dev/diskn
+    sudo dd bs=1m if=~/Downloads/2015-01-31-raspbian.img of=/dev/rdiskn
 
 then
 
@@ -157,7 +157,6 @@ install whe
     git fetch origin
     git checkout -b surveillanceowl origin/surveillanceowl
     npm install
-    
 
 install prerequisites
 
@@ -181,8 +180,11 @@ Recompiling snapper
 
 (you may not need to)
 
-    sudo apt-get install cmake
+    sudo apt-get install cmake -y
 
+    cd /opt/vc
+    sudo git clone https://github.com/raspberrypi/userland.git
+    
     cd /opt/vc/userland 
     sudo chown -R pi:pi .
     sed -i 's/DEFINED CMAKE_TOOLCHAIN_FILE/NOT DEFINED CMAKE_TOOLCHAIN_FILE/g' makefiles/cmake/arm-linux.cmake
