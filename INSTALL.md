@@ -122,6 +122,9 @@ install whe
 
 install supervisord for process management
 
+    sudo update-rc.d dnsmasq defaults
+    sudo update-rc.d dnsmasq enable
+
     sudo apt-get install supervisor -y
 
     cd
