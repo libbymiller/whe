@@ -50,7 +50,9 @@ change ssid to
     ssid=surveillanceowl
 
 reboot
+
 unplug ethernet if plugged in
+
 connect to surveillanceowl to check it works
 
 plug ethernet in again and ssh in
