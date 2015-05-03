@@ -140,7 +140,7 @@ reboot and test by connecting to the network and opening a browser, making sure 
 Install Snapper
 --
 
-(if you've not done it already)
+install node and whe (if you've not done it already)
 
 install node
 
