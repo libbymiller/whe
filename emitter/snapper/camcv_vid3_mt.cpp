@@ -82,9 +82,9 @@ string fn_haar;
 int im_width;           // image width
 int im_height;          // image height
 char key;
+unsigned int microseconds;
 
-
-Mat gray,frame,face,face_resized,img_rgb;
+Mat gray,gray2,frame,face,face_resized,img_rgb;
 vector<Mat> images;
 vector<int> labels;
 
@@ -274,18 +274,21 @@ static void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffe
                 int n = cvCountNonZero(pydiff);
 
                 if(n>1000){
-//                  fprintf(stdout, "MOTION DETECTED (%d)\n", n);
+                  fprintf(stdout, "MOTION DETECTED (%d)\n", n);
+///                  curl_post();
+///                  sleep(1);
 
-                  gray=cvarrToMat(pydiff);
+                  gray2=cvarrToMat(pydiff);
 
-                 int max_place = 0;
-                 int max_val = 0;
+                  int max_place = 0;
+                  int max_val = 0;
 
+                  fprintf(stdout, "gray2 cols is %d\n",gray2.cols);
 //sum the columns, converting to b/w
-                  for (int i = 0; i < gray.cols; i++ ) {
+                  for (int i = 0; i < gray2.cols; i++ ) {
                     int tot = 0;//total in a col
-                    for (int j = 0; j < gray.rows; j++) {
-                      if(gray.at<uchar>(j, i)>0){
+                    for (int j = 0; j < gray2.rows; j++) {
+                      if(gray2.at<uchar>(j, i)>0){
                         tot++;
                      }
                     }
@@ -296,10 +299,17 @@ static void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffe
 
                   }
                   fprintf(stdout, "max_x %d\n",max_place);
-
+                  std::ofstream myfile;
+                  myfile.open ("/home/pi/whe/emitter/snapper/images/move");
+                  myfile << max_place;
+                  myfile.close();
+                  usleep(500000);
                 }///end if motion
 
+
                 cvCopy(py, pylast, NULL);
+/*
+                gray=cvarrToMat(py);
 
                 //cvShowImage("camcvWin", py); // display only gray channel
 
@@ -310,7 +320,6 @@ static void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffe
 ////////////////////////////////
 
                 // detect faces
-/*
                 face_cascade.detectMultiScale(gray, faces, 1.1, 3, CV_HAAR_SCALE_IMAGE, Size(80,80));
                 if(faces.size()>0){
                    trace("found faces");
@@ -340,8 +349,10 @@ static void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffe
 		//rectangle(gray, face_i, CV_RGB(255, 255 ,255), 1);
 //		rectangle(gray, face_i, CV_RGB(0, 255,0), 1);
 		rectangle(img_rgb, face_i, CV_RGB(0, 255,0), 1);
+
+
 	} // end for
-*/
+
 
 /////////////////////////
 // END OF FACE RECO
@@ -353,9 +364,10 @@ static void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffe
         }else{
           imwrite( "/home/pi/whe/emitter/snapper/images/camcvimage.jpg", gray );
         }
+
+*/
         key = (char) waitKey(1);
         nCount++;               // count frames displayed
-
          mmal_buffer_header_mem_unlock(buffer);
       }
       else vcos_log_error("buffer null");
