@@ -33,7 +33,7 @@ replace the contents of steps/wpa/install.sh
 with
 
     sudo apt-get install -y --force-yes dnsmasq && \
-    sudo apt-get install -y --force-yes ruby1.9.1-dev hostapd=1:1.0-3+deb7u1 wpasupplicant && \
+    sudo apt-get install -y --force-yes ruby1.9.1-dev hostapd=1:1.0-3+deb7u2 wpasupplicant && \
     sudo gem install --no-ri --no-rdoc wpa_cli_web
 
 then
