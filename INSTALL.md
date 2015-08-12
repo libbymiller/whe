@@ -243,7 +243,7 @@ to
     update_config=1
 
     network={
-        ssid="whe"
+        ssid="surveillanceowl"
         proto=RSN
         key_mgmt=NONE
     }
