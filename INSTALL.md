@@ -228,6 +228,25 @@ install airodump-ng
     sudo cp emitter/sniffer/sniffer_supervisor.conf /etc/supervisor/conf.d/sniffer.conf
     sudo cp emitter/sender/metadata_sender_supervisor.conf /etc/supervisor/conf.d/metadata-sender.conf
 
+---
+
+If Collector is a separate machine
+--
+
+edit wp_supplicant config
+
+    sudo pico /etc/wpa_supplicant/wpa_supplicant.conf
+
+to
+
+    ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+    update_config=1
+
+    network={
+        ssid="whe"
+        proto=RSN
+        key_mgmt=NONE
+    }
 
 ---
 
