@@ -17,7 +17,8 @@
     "imageBasePath": "/home/pi/whe/emitter/snapper/images/"
   },
   "sniffer": {
-    "dataFilename": "/tmp/sniffer-data.json"
+    "dataFilename": "/tmp/sniffer-data.json",
+    "dataCsvPrefix": "/tmp/sniffer-data-csv"
   },
   "heartbeatIntervalSecs": 1,
   "maxNumSecsBeforeRender": 2,
