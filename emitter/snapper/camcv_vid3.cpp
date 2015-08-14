@@ -276,7 +276,7 @@ static void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffe
                 if(n>1000){
                   fprintf(stdout, "MOTION DETECTED (%d)\n", n);
                   curl_post();
-                  sleep(1);
+                  sleep(5);
                 }
 
                 cvCopy(py, pylast, NULL);
@@ -659,7 +659,6 @@ int main(int argc, const char **argv)
 
         pylast = cvCreateImage(cvSize(w,h), IPL_DEPTH_8U, 1);
         pydiff = cvCreateImage(cvSize(w,h), IPL_DEPTH_8U, 1);
-
 
         image = cvCreateImage(cvSize(w,h), IPL_DEPTH_8U, 3);    // final picture to display
 
