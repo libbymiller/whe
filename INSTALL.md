@@ -145,6 +145,7 @@ install node and whe (if you've not done it already)
 install node
 
     cd
+    git clone https://github.com/radiodan/provision.git
     cd provision
     sudo LOG_LEVEL=DEBUG ./provision node
 
