@@ -171,9 +171,6 @@ install supervisord for process management if you haven't already
 
     sudo apt-get install supervisor -y
 
-    cd
-    cd whe
-    sudo cp shared/supervisor.conf /etc/init.d/supervisor
 
 add to supervisor
 
