@@ -164,6 +164,16 @@ install prerequisites
     sudo apt-get install libopencv-dev python-opencv -y
     sudo apt-get install libcurl4-openssl-dev -y
 
+install supervisord for process management if you haven't already
+
+    sudo update-rc.d dnsmasq defaults
+    sudo update-rc.d dnsmasq enable
+
+    sudo apt-get install supervisor -y
+
+    cd
+    cd whe
+    sudo cp shared/supervisor.conf /etc/init.d/supervisor
 
 add to supervisor
 
