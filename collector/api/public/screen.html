@@ -53,153 +53,41 @@
 </head>
 <body>
   <div id="ui"></div>
+  <script id="ui-view" type="text/ractive">
+    <div class="view {{outgoingView === name ? 'outgoing' : '' }} {{incomingView === name ? 'incoming' : '' }} {{ currentView == name ? 'current' : '' }}" id="{{name}}">
+      {{>content}}
+    </div>
+  </script>
+  <script id="ui-credits" type="text/ractive">
+    <View name="credits">
+      <h2>Credits</h2>
+      <ul>
+        <li>Developers</li>
+        <li>Designers</li>
+      </ul>
+    </View>
+  </script>
+  <script id="ui-images" type="text/ractive">
+    <View name="images">
+      <h2>Images</h2>
+      {{#latestImages}}
+        <img src="{{.}}" />
+      {{/latestImages}}
+    </View>
+  </script>
+  <script id="ui-networks" type="text/ractive">
+    <View name="networks">
+      <h2>Networks</h2>
+    </View>
+  </script>
   <script id="ui-template" type="text/ractive">
-  <div class="wrapper" data-state="{{ isTriggering ? 'is-triggering' : '' }}">
-    <div class="masthead">
-      <div class="status">
-        Status: monitoring
-      </div>
-    </div>
-
-    <div class="metadata">
-      <h2>Nearby devices</h2>
-      {{#metadataWithManufacturer.slice(0, 3):index}}
-      <dl class="md md-{{index}}">
-        <dt>Device
-          <span class="fadeable">{{index + 1}}</span> / <span class="fadeable">{{devices}}</span>
-        </dt>
-        <dt class="aps">Networks</dt>
-        <dd class="aps two-line fadeable">
-          {{#isTriggering}}Searching{{/isTriggering}}
-          {{^isTriggering}}{{ aps || 'Unknown' }}{{/isTriggering}}
-        </dd>
-        <dt class="manufacturer">Manufacturer</dt>
-        <dd class="manufacturer ellipsis fadeable">{{ shortName || 'Unknown' }} {{#name}}({{name}}){{/name}}</dd>
-        <dt class="mac">Device ID</dt>
-        <dd class="mac fadeable">{{ id || 'Unknown' }}</dd>
-      </dl>
-      {{/}}
-    </div>
-
-    <div class="photos">
-      <div class="primary">
-      {{#primaryImage}}
-        <img class="fadeable" src="{{.}}" />
-      {{/images}}
-      </div>
-      <div class="secondary">
-      {{#secondaryImages}}
-        <img class="fadeable" src="{{.}}" />
-      {{/images}}
-      </div>
-    </div>
-  </div><!-- .wrapper -->
-
+    <div class="wrapper">
+    <Credits></Credits>
+    <Images></Images>
+    <Networks></Networks>
+    </div><!-- .wrapper -->
   </script>
-  <script>
-    var ractive,
-        triggerStartTime = Date.now(),
-        minTriggerResetTimeMs = 3 * 1000;
-
-    $.get('/config').then(initWithConfig);
-
-    function initWithConfig(config) {
-      var collectorBase = 'http://' + config.collector.host + ':' + config.collector.port;
-      var client = new Faye.Client(collectorBase + '/faye');
-      ractive = new Ractive({
-        el: '#ui',
-        template: '#ui-template',
-        computed: {
-          'imageFiles': function () {
-            var images = this.get('latestImages').map(addCachebuster);
-            return images;
-          },
-          'primaryImage': function () {
-            return this.get('imageFiles').slice(0, 1);
-          },
-          'secondaryImages': function () {
-            return this.get('imageFiles').slice(1);
-          },
-          'friends': function () {
-            return _.pluck( this.get('metadata.0.friends'), 'id' );
-          },
-          'metadataNoAps': function () {
-            return _.filter(this.get('metadata'), function (d) {
-              return d.aps != '';
-            });
-          },
-          'metadataWithManufacturer': function () {
-            return _.filter(this.get('metadata'), function (d) {
-              return d.shortName != '';
-            });
-          },
-          'metadataByPower': function () {
-            var obj = {},
-                groups = _.groupBy( this.get('metadataWithManufacturer'), 'power' );
-
-            _.forEach( groups, function (m, key) {
-              obj[key] = {
-                items: m,
-                length: m.length
-              };
-            });
-
-            return obj;
-          }
-        },
-        data: {
-          collectorBase: collectorBase,
-          isTriggering: false,
-          filterNoAps: function (data) {
-            return _.filter(data, function (d) {
-              return d.aps != '';
-            });
-          }
-        }
-      });
-
-      client.subscribe('/trigger', handleTrigger);
-      client.subscribe('/reload', handleReload);
-      client.subscribe('/render', handleRender);
-      handleRender({}); // Initial render
-
-      function handleTrigger(msg) {
-        console.log('TRIGGER', msg);
-        ractive.set('isTriggering', true);
-        triggerStartTime = Date.now();
-      }
-
-      function handleReload(msg) {
-        console.log('RELOAD', msg);
-        window.location.reload(false);
-      }
-
-      function handleRender(msg) {
-        console.log('RENDER', msg);
-        $.get(collectorBase + '/state')
-         .then(function (data) {
-            console.log('data', data);
-            window.d = data;
-            ractive.set(data);
-
-            var renderInterval = Date.now() - triggerStartTime,
-                timeLeft = minTriggerResetTimeMs - renderInterval;
-
-            if (timeLeft <= 0) {
-              ractive.set('isTriggering', false);
-            } else {
-              setTimeout(function () {
-                ractive.set('isTriggering', false);
-              }, timeLeft);
-            }
-          });
-      }
-
-      function addCachebuster(url) {
-        return url + '?' + Date.now();
-      }
-    }
-
-  </script>
+  <script src="js/components.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>

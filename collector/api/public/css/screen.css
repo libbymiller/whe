@@ -1,109 +1,12 @@
-/*
-  general
-*/
-html {
-  /* Prevent text size change on orientation change. */
-  -webkit-text-size-adjust: 100%;
-}
-
 body {
-  color: #fff;
-  background-color: #000;
-  text-rendering: optimizeLegibility;
-  margin: 0;
-}
-
-.wrapper {
-  margin: 0;
-  padding: 0;
-}
-
-.ellipsis {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  background: black;
+  color: white;
 }
 
 /*
-  masthead
+  views
 */
-.masthead {
-  position: absolute;
-  top: 0;
-  bottom: 90%;
-  left: 0;
-  right: 0;
-}
-
-.masthead h1,
-.masthead .status {
-  position: absolute;
-  top: 12px;
-  bottom: 0;
-
-  font-size: 2rem;
-  text-transform: uppercase;
-  transform: translate(0, 25%);
-}
-
-.masthead h1 {
-  margin: 0;
-  padding: 0 0 0 2rem;
-}
-
-.masthead .status {
-  right: 0;
-
-  margin: 0;
-  padding: 0 2rem 0 0;
-}
-
-.masthead .status:after {
-  content: ' ';
-  display: inline-block;
-  vertical-align: middle;
-
-  width: 2rem;
-  height: 2rem;
-  margin-left: 1rem;
-
-  background-color: red;
-  border-radius: 10rem;
-
-  opacity: 0; /* default state */
-}
-
-[data-state='is-triggering'] .masthead .status:after {
-  -webkit-animation: flash 0.5s infinite ease-in-out alternate;
-          animation: flash 0.5s infinite;
-}
-
-@-webkit-keyframes flash {
-  0%   { opacity: 0.0; }
-  100% { opacity: 1.0; }
-}
-
-@keyframes flash {
-  0%   { opacity: 0.0; }
-  100% { opacity: 1.0; }
-}
-
-/*
-  Fade out
-*/
-[data-state='is-triggering'] .fadeable {
-  opacity: 0;
-}
-
-.fadeable {
-  -webkit-transition: opacity 1s ease-out;
-          transition: opacity 1s ease-out;
-}
-
-/*
-  photos
-*/
-.photos {
+.view {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -111,95 +14,32 @@ body {
   right: 0;
 
   margin: 0;
-  padding: 0;
+  padding: 10em;
 
   z-index: -100;
+  display: none;
 }
-.photos .primary img {
+
+.view.current {
   display: block;
-
-  /* Set rules to fill background */
-  min-height: 10vh;
-  min-width: 10vw;
-
-  /* Set up proportionate scaling */
-  width: 100%;
-  height: auto;
-}
-.photos .secondary {
-  position: absolute;
-  top: 10%;
-  right: 0;
-
-  width: 50vw;
-
-  padding: 2rem;
-  text-align: right;
-}
-.photos .secondary img {
-  margin-bottom: 1rem;
-  height: 40vh;
-
-  border: 1px solid rgba(0, 0, 0, 0.4);
 }
 
-
-/*
-  Metadata
-*/
-.metadata {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 33%;
-
-  padding: 2em 10% 2em 2em;
-
-  background-color: rgba(0, 0, 0, 0.0);
-  background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
-  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
+@-webkit-keyframes incoming {
+  from { -webkit-transform: translateX(200%); }
+  to { -webkit-transform: translateX(0) ; }
 }
 
-.metadata dt,
-.metadata dd {
-  margin: 0;
-  padding: 0;
+@-webkit-keyframes outgoing {
+  from { -webkit-transform: translateX(0); }
+  to { -webkit-transform: translateX(-100%) ; }
 }
 
-.metadata dt {
-  margin-top: 1em;
-  text-transform: uppercase;
-}
-
-.metadata dd {
-  font-size: 2em;
-}
-
-/*
-  Layout metadata blocks
-*/
-.md {
-  /*border: 1px solid green;*/
-}
-.md-0 {
+.view.incoming {
+  -webkit-animation: incoming 4s;
+  z-index: 100;
   display: block;
-  width: 100%;
 }
 
-.md-1, .md-2 {
-  float: left;
-  width: 48%;
-  font-size: 1em;
-}
-
-.md-1 {
-  padding-right: 16px;
-}
-
-/*
-  Sizes
-*/
-.md-1 dd, .md-2 dd {
-  font-size: 1.7em;
+.view.outgoing {
+  -webkit-animation: outgoing 4s forwards;
 }
