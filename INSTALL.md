@@ -132,7 +132,24 @@ install supervisord for process management
     sudo cp shared/supervisor.conf /etc/init.d/supervisor
     sudo cp collector/collector_supervisor.conf /etc/supervisor/conf.d/collector.conf
 
-reboot and test by connecting to the network and opening a browser, making sure you unplug ethernet
+receipt printer
+
+    sudo nano /etc/inittab
+
+  find this line:
+      T0:23:respawn:/sbin/getty -L ttyAMA0 115200 vt100
+
+  change the baud rate to 19200:
+
+      T0:23:respawn:/sbin/getty -L ttyAMA0 19200 vt100
+
+    sudo nano /boot/cmdline.txt
+
+  Remove `console=ttyAMA0,115200`
+
+
+
+Reboot and test by connecting to the network and opening a browser, making sure you unplug ethernet
 
 
 ---
