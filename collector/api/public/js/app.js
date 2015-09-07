@@ -14,7 +14,7 @@ function initWithConfig(config) {
     },
     data: {
       collectorBase: collectorBase,
-      currentView: 'networks',
+      currentView: 'images',
       isTriggering: false,
       filterNoAps: function (data) {
         return _.filter(data, function (d) {
@@ -57,7 +57,7 @@ function initWithConfig(config) {
     }, 4000);
   }
 
-  setTimeout(renderNextView, 2000);
+  //setTimeout(renderNextView, 2000);
 
   function handleTrigger(msg) {
     console.log('TRIGGER', msg);

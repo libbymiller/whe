@@ -14,7 +14,7 @@ body {
   right: 0;
 
   margin: 0;
-  padding: 10em;
+  padding: 0;
 
   z-index: -100;
   display: none;
@@ -42,4 +42,15 @@ body {
 
 .view.outgoing {
   -webkit-animation: outgoing 4s forwards;
+}
+
+.view#images div {
+  height: 50%;
+  width: 50%;
+  float: left;
+  overflow: hidden;
+}
+
+.view#images img {
+  width: 100%;
 }

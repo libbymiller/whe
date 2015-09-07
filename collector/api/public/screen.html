@@ -99,10 +99,11 @@
   </script>
   <script id="ui-images" type="text/ractive">
     <View name="images">
-      <h2>Images</h2>
-      {{#latestImages}}
-        <img src="{{.}}" />
-      {{/latestImages}}
+      {{#randomImages:index}}
+      <div>
+        <img src="{{.}}" id="img-{{index}}" />
+      </div>
+      {{/randomImages}}
     </View>
   </script>
   <script id="ui-networks" type="text/ractive">
