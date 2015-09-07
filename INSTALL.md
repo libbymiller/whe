@@ -134,6 +134,15 @@ install supervisord for process management
 
 receipt printer
 
+  Pins (http://wiringpi.com/pins/)
+
+  || Printer wire      || Pi GPIO header number ||
+  |  DC IN GND (black) |    -                    |
+  |  DC IN VH  (red)   |    -                    |
+  |  TTL GND  (black)  |    6                    |
+  |  TTL RX  (yellow)  |    8                    |
+  |  TTL TX  (green)   |    10                   |
+
     sudo nano /etc/inittab
 
   find this line:
