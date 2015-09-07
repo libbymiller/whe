@@ -53,6 +53,10 @@
 </head>
 <body>
   <div id="ui"></div>
+  <script id="ui-update" type="text/ractive">
+    <h2>Data Received</h2>
+    <p>Update #{{updateId}}</p>
+  </script>
   <script id="ui-view" type="text/ractive">
     <div class="view {{outgoingView === name ? 'outgoing' : '' }} {{incomingView === name ? 'incoming' : '' }} {{ currentView == name ? 'current' : '' }}" id="{{name}}">
       {{>content}}
@@ -63,11 +67,34 @@
       <h2>Credits</h2>
       <dl>
         <dt>Developers</dt>
-        <dd>Libby Miller, Andrew Nicolau, Dan Nuttall
+        <dd><ul>
+          <li>Libby Miller</li><li>Andrew Nicolau</li><li>Dan Nuttall</li>
+        </ul></dd>
         <dt>Designers</dt>
         <dd>CC Icon designers go here</dd>
       </dl>
       <p>&copy; 2015 BBC Research and Development</p>
+    </View>
+  </script>
+  <script id="ui-devices-recent" type="text/ractive">
+    <View name="devices-recent">
+      <h2>Most Recent Devices</h2>
+      <ol>
+        {{#devices.recent}}
+          <li>{{manufacturer}} - {{macAddress}}</li>
+        {{/devices.recent}}
+      </ol>
+    </View>
+  </script>
+  <script id="ui-devices-total" type="text/ractive">
+    <View name="devices-total">
+      <h2>Devices</h2>
+      <ol>
+        {{#devices.breakdown}}
+          <li>{{manufacturer}} - {{count}}</li>
+        {{/devices.breakdown}}
+        <li>Total - {{devices.total}}</li>
+      </ol>
     </View>
   </script>
   <script id="ui-images" type="text/ractive">
@@ -81,6 +108,13 @@
   <script id="ui-networks" type="text/ractive">
     <View name="networks">
       <h2>Networks</h2>
+    </View>
+  </script>
+  <script id="ui-printer" type="text/ractive">
+    <View name="printer">
+      <h2>Now Printing</h2>
+      <p>{{printCount}} times printed</p>
+      <p>Total print length {{printLength}}cm</p>
     </View>
   </script>
   <script id="ui-template" type="text/ractive">
