@@ -65,7 +65,7 @@ try {
      //dump to csv file
      try{
 
-       exec('nohup sudo airodump-ng mon0 --channel 11 --berlin 2 --output-format csv --write '+dataCsvPrefix+' > /tmp/airlog.txt 2>&1 &', function callback(error, stdout, stderr){
+       exec('nohup sudo airodump-ng mon0 --channel 11 --berlin 2 --output-format csv --write '+dataCsvPrefix+' > /dev/null 2>&1 &', function callback(error, stdout, stderr){
 
          if (error) {
            console.log(error.stack);
