@@ -31,17 +31,19 @@ body {
 }
 
 @-webkit-keyframes incoming {
-  from { -webkit-transform: translateX(200%); }
-  to { -webkit-transform: translateX(0) ; }
+  from { -webkit-transform: translateX(200%); opacity: 0; }
+  50% { opacity: 1; }
+  to { -webkit-transform: translateX(0); opacity: 1; }
 }
 
 @-webkit-keyframes outgoing {
-  from { -webkit-transform: translateX(0); }
-  to { -webkit-transform: translateX(-100%) ; }
+  from { -webkit-transform: translateX(0); opacity: 1; }
+  40% { opacity: 0; }
+  to { -webkit-transform: translateX(-50%); opacity: 0; }
 }
 
 .view.incoming {
-  -webkit-animation: incoming 4s;
+  -webkit-animation: incoming 2s;
   z-index: 100;
   display: block;
 }

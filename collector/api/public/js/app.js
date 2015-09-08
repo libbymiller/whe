@@ -2,7 +2,7 @@ var ractive,
     triggerStartTime = Date.now(),
     printLengthPerPrintCm = 5,
     minTriggerResetTimeMs = 3 * 1000,
-    viewTransitionTimeMs = 4000,
+    viewTransitionTimeMs = 2000,
     timeBetweenViewsMs = viewTransitionTimeMs + 10000;
 
 $.get('/config').then(initWithConfig);
