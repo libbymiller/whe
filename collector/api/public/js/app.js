@@ -18,7 +18,29 @@ function initWithConfig(config) {
         return devices;
       },
       deviceTotalsByManufacturer: function () {
-        return _.countBy(this.get('metadata'), 'shortName');
+        var counts = _( this.get('metadata') )
+                      .countBy('shortName')
+                      .value();
+
+        if (counts['undefined']) {
+          counts['Unknown'] = counts['undefined'];
+          delete counts['undefined'];
+        }
+
+        // Sort
+        counts = _(counts)
+          .pairs()
+          .sortBy(function (item) { return item[1]; })
+          .reverse()
+          .map(function (item) {
+            return {
+              name : item[0],
+              count: item[1]
+            };
+          })
+          .value();
+
+        return counts;
       },
       totalDevices: function () {
         return this.get('metadata').length;
