@@ -1,6 +1,40 @@
 body {
+  font-family: 'open-sans';
   background: black;
   color: white;
+}
+
+/*
+  Font
+*/
+@font-face {
+  font-family: 'open-sans';
+  font-weight: 300;
+  src: url('../fonts/open-sans/OpenSans-Light.ttf');
+}
+
+@font-face {
+  font-family: 'open-sans';
+  font-style: italic;
+  src: url('../fonts/open-sans/OpenSans-LightItalic.ttf');
+}
+
+@font-face {
+  font-family: 'open-sans';
+  font-weight: 400;
+  src: url('../fonts/open-sans/OpenSans-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'open-sans';
+  font-weight: 700;
+  src: url('../fonts/open-sans/OpenSans-Bold.ttf');
+}
+
+@font-face {
+  font-family: 'open-sans';
+  font-style: italic;
+  src: url('../fonts/open-sans/OpenSans-BoldItalic.ttf');
 }
 
 /*
