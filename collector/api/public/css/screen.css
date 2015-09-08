@@ -4,6 +4,12 @@ body {
 }
 
 /*
+  Wraps all Views
+*/
+.wrapper {
+}
+
+/*
   View - shared styles
 */
 .view {
@@ -64,6 +70,34 @@ body {
 
 .view .value {
   color: blue;
+}
+
+/* new data strip along bottom */
+.new-data {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  height: 25vh;
+  font-size: 16vh;
+  text-align: center;
+
+  z-index: 200;
+
+  perspective: 100px;
+}
+
+.new-data-inner {
+    background-color: rgba(255, 0, 0, 0.7);
+    color: white;
+
+    transition: opacity 0.6s;
+    opacity: 0;
+}
+
+.new-data-inner.flyInBottom {
+  opacity: 1;
 }
 
 /*

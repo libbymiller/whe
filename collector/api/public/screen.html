@@ -43,6 +43,7 @@
 
   <link rel="stylesheet" type="text/css" href="/css/normalize.css">
   <link rel="stylesheet" type="text/css" href="/css/skeleton.css">
+  <link rel="stylesheet" type="text/css" href="/css/reboundgen.css">
   <link rel="stylesheet" type="text/css" href="/css/screen.css">
 
   <script src="/faye/client.js"></script>
@@ -153,6 +154,11 @@
       <RecentDevices></RecentDevices>
       <Printer printCount={{printCount}}></Printer>
       <ImageTotals></ImageTotals>
+      <div class="new-data">
+        <div class="new-data-inner {{ isTriggering ? 'flyInBottom' : '' }}">
+          New data received
+        </div>
+      </div>
     </div><!-- .wrapper -->
   </script>
   <script src="js/components.js"></script>
