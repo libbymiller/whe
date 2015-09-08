@@ -1,3 +1,33 @@
+var ViewComponent = Ractive.extend({
+  template: '#ui-view',
+  oninit: function () {
+    var name = this.get('name');
+    this.observe('currentView', function (newValue, oldValue) {
+      if (newValue === name) {
+        console.log('View has mounted', name);
+        this.startFrameScroll();
+      }
+    });
+  },
+  startFrameScroll: function () {
+    if (!this.el) { return; }
+
+    var el = this.el.querySelector('.scrollable-frame > *'),
+        height;
+
+    if (el) {
+      setTimeout(function () {
+        height = el.scrollHeight / 2;
+        console.log('height', el.scrollHeight, height, el);
+        el.style.transform = 'translateY(-' + height + 'px)';
+      }, 0);
+    }
+  }
+});
+
+
+// scrollable-frame
+
 var ImagesComponent = Ractive.extend({
   template: '#ui-images',
   oninit: function () {
@@ -14,7 +44,7 @@ var ImagesComponent = Ractive.extend({
 var RecentDevicesComponent = Ractive.extend({ template: '#ui-recent-devices' });
 
 Ractive.components = {
-  View: Ractive.extend({ template: '#ui-view' }),
+  View: ViewComponent,
   Printer: Ractive.extend({ template: '#ui-printer' }),
   Devices: Ractive.extend({ template: '#ui-devices' }),
   ImageTotals: Ractive.extend({ template: '#ui-image-totals' }),

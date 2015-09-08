@@ -56,6 +56,8 @@ function initWithConfig(config) {
       collectorBase: collectorBase,
       currentView: 'images',
       isTriggering: false,
+      latestImages: [],
+      metadata: [],
       printCount: 0,
       imageCount: 0,
       filterNoAps: function (data) {

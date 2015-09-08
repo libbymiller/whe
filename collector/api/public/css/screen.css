@@ -71,6 +71,18 @@ body {
   padding-right: 2vw;
 }
 
+/*
+  Scrolling
+*/
+.view .scrollable-frame {
+  height: 580px;
+  overflow: hidden;
+}
+
+.view .scrollable-frame > * {
+  transition: transform 2s;
+}
+
 .view.current {
   display: block;
 }

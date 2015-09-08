@@ -83,15 +83,17 @@
         <img src="/images/icons/devices.svg" />
         Most Recent Devices
       </h2>
-      <table>
-        {{#recentDevices}}
-          <tr>
-            <td>{{shortName}}</td>
-            <td>{{id}}</td>
-            <td>{{source}}</td>
-          </tr>
-        {{/recentDevices}}
-      </table>
+      <div class="scrollable-frame">
+        <table>
+          {{#recentDevices}}
+            <tr>
+              <td>{{shortName}}</td>
+              <td>{{id}}</td>
+              <td>{{source}}</td>
+            </tr>
+          {{/recentDevices}}
+        </table>
+      </div>
     </View>
   </script>
   <script id="ui-images" type="text/ractive">
@@ -121,18 +123,20 @@
         <img src="/images/icons/devices.svg" />
         Total devices
       </h2>
-      <table>
-        {{#deviceTotalsByManufacturer:key}}
+      <div class="scrollable-frame">
+        <table>
+          {{#deviceTotalsByManufacturer:key}}
+            <tr>
+              <td>{{name}}</td>
+              <td>{{count}}</td>
+            </tr>
+          {{/}}
           <tr>
-            <td>{{name}}</td>
-            <td>{{count}}</td>
+            <td>Total</td>
+            <td>{{totalDevices}}</td>
           </tr>
-        {{/}}
-        <tr>
-          <td>Total</td>
-          <td>{{totalDevices}}</td>
-        </tr>
-      </table>
+        </table>
+      </div>
     </View>
   </script>
   <script id="ui-printer" type="text/ractive">
