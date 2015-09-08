@@ -19,7 +19,7 @@ function initWithConfig(config) {
         return devices;
       },
       deviceTotalsByManufacturer: function () {
-        return _.countBy(this.get('metadata'), 'company');
+        return _.countBy(this.get('metadata'), 'shortName');
       },
       printLength: function () {
         return this.get('printCount') * printLengthPerPrintCm;
