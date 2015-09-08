@@ -76,14 +76,17 @@
       <p>&copy; 2015 BBC Research and Development</p>
     </View>
   </script>
-  <script id="ui-devices-recent" type="text/ractive">
-    <View name="devices-recent">
+  <script id="ui-recent-devices" type="text/ractive">
+    <View name="recent-devices">
       <h2>Most Recent Devices</h2>
-      <ol>
-        {{#devices.recent}}
-          <li>{{manufacturer}} - {{macAddress}}</li>
-        {{/devices.recent}}
-      </ol>
+      <table>
+        {{#recentDevices}}
+          <tr>
+            <td>{{company}}</td>
+            <td>{{id}}</td>
+          </tr>
+        {{/recentDevices}}
+      </table>
     </View>
   </script>
   <script id="ui-devices-total" type="text/ractive">
@@ -123,6 +126,7 @@
     <Credits></Credits>
     <Images></Images>
     <Networks></Networks>
+    <RecentDevices></RecentDevices>
     </div><!-- .wrapper -->
   </script>
   <script src="js/components.js"></script>

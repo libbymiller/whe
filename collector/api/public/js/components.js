@@ -11,9 +11,15 @@ var ImagesComponent = Ractive.extend({
   }
 });
 
+var RecentDevicesComponent = Ractive.extend({ template: '#ui-recent-devices' });
+
+
+var NetworksComponent = Ractive.extend({ template: '#ui-networks' });
+
 Ractive.components = {
   View: Ractive.extend({ template: '#ui-view' }),
   Images: ImagesComponent,
-  Networks: Ractive.extend({ template: '#ui-networks' }),
+  Networks: NetworksComponent,
+  RecentDevices: RecentDevicesComponent,
   Credits: Ractive.extend({ template: '#ui-credits' })
 };

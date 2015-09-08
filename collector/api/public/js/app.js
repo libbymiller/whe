@@ -1,6 +1,8 @@
 var ractive,
     triggerStartTime = Date.now(),
-    minTriggerResetTimeMs = 3 * 1000;
+    minTriggerResetTimeMs = 3 * 1000,
+    viewTransitionTimeMs = 4000,
+    timeBetweenViewsMs = viewTransitionTimeMs + 10000;
 
 $.get('/config').then(initWithConfig);
 
@@ -11,6 +13,10 @@ function initWithConfig(config) {
     el: '#ui',
     template: '#ui-template',
     computed: {
+      recentDevices: function () {
+        var devices = _.sortByOrder(this.get('metadata'), ['time']);
+        return devices;
+      }
     },
     data: {
       collectorBase: collectorBase,
@@ -24,10 +30,45 @@ function initWithConfig(config) {
     }
   });
 
+  window.onhashchange = renderNextView;
+
+  function viewInUrlHash() {
+    if (window.location.hash) {
+      return window.location.hash.replace('#', '');
+    } else {
+      return null;
+    }
+  }
+
   client.subscribe('/trigger', handleTrigger);
   client.subscribe('/reload', handleReload);
   client.subscribe('/render', handleRender);
   handleRender({}); // Initial render
+
+  // Transition to new view when the
+  // 'nextView' property is set
+  ractive.observe('nextView', function (newValue, oldValue, keypath) {
+    if (newValue == null) { return; }
+
+    var currentView = ractive.get('currentView'),
+        nextView = newValue;
+
+    if (currentView === nextView) {
+      console.info('Views are the same, will not transition', currentView);
+      return;
+    }
+
+    ractive.set({incomingView: nextView});
+    ractive.set({outgoingView: currentView});
+
+    setTimeout(function() {
+      ractive.set({
+        incomingView: null, outgoingView: null, currentView: nextView
+      });
+    }, viewTransitionTimeMs);
+  });
+
+  renderNextView();
 
   function renderNextView() {
     var currentView = ractive.get('currentView'),
@@ -43,18 +84,15 @@ function initWithConfig(config) {
     views = _.compact(views);
     nextView = _.sample(views);
 
-    console.log(nextView);
+    if (viewInUrlHash()) {
+      console.warn('URL hash is overriding random view selection');
+      nextView = viewInUrlHash();
+    }
 
-    ractive.set({incomingView: nextView});
-    ractive.set({outgoingView: currentView});
+    console.log('nextView', nextView);
+    ractive.set('nextView', nextView);
 
-    setTimeout(function() {
-      ractive.set({
-        incomingView: null, outgoingView: null, currentView: nextView
-      });
-
-      setTimeout(renderNextView, 2000);
-    }, 4000);
+    setTimeout(renderNextView, timeBetweenViewsMs);
   }
 
   //setTimeout(renderNextView, 2000);
