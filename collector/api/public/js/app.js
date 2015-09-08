@@ -2,8 +2,7 @@ var ractive,
     triggerStartTime = Date.now(),
     printLengthPerPrintCm = 5,
     minTriggerResetTimeMs = 3 * 1000,
-    viewTransitionTimeMs = 2000,
-    timeBetweenViewsMs = viewTransitionTimeMs + 10000;
+    viewTransitionTimeMs = 2000;
 
 $.get('/config').then(initWithConfig);
 
@@ -96,6 +95,7 @@ function initWithConfig(config) {
 
   function renderNextView() {
     var currentView = ractive.get('currentView'),
+        timeBetweenViewsMs,
         nextView,
         views = _.map(ractive.findAll('.view'), function(x) {
       var viewId = x.getAttribute('id');
@@ -116,10 +116,14 @@ function initWithConfig(config) {
     console.log('nextView', nextView);
     ractive.set('nextView', nextView);
 
+    if(nextView === 'images') {
+      timeBetweenViewsMs = viewTransitionTimeMs + 10000;
+    } else {
+      timeBetweenViewsMs = viewTransitionTimeMs + 5000;
+    }
+
     setTimeout(renderNextView, timeBetweenViewsMs);
   }
-
-  //setTimeout(renderNextView, 2000);
 
   function handleTrigger(msg) {
     console.log('TRIGGER', msg);
