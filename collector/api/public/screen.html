@@ -109,24 +109,50 @@
       {{/randomImages}}
     </View>
   </script>
-  <script id="ui-networks" type="text/ractive">
-    <View name="networks">
-      <h2>Networks</h2>
+  <script id="ui-image-totals" type="text/ractive">
+    <View name="image-totals">
+      <p class="metric">
+        <span class="value">{{imageCount}}</span>
+        images captured
+      </p>
+      <p class="metric">
+        <span class="value">{{totalCameras}}</span>
+         hidden cameras
+      </p>
+    </View>
+  </script>
+  <script id="ui-devices" type="text/ractive">
+    <View name="devices">
+      <h2>Devices</h2>
+      <table>
+        {{#deviceTotalsByManufacturer:key}}
+          <tr>
+            <td>{{key}}</td>
+            <td>{{.}}</td>
+          </tr>
+        {{/}}
+      </table>
     </View>
   </script>
   <script id="ui-printer" type="text/ractive">
     <View name="printer">
       <h2>Now Printing</h2>
-      <p>{{printCount}} times printed</p>
-      <p>Total print length {{printLength}}cm</p>
+      <p class="metric">
+        <span class="value">{{printCount}}</span>
+         times printed
+      </p>
+      <p class="metric">
+        Total print length <span class="value">{{printLength}}</span>cm
+      </p>
     </View>
   </script>
   <script id="ui-template" type="text/ractive">
     <div class="wrapper">
-    <Credits></Credits>
     <Images></Images>
-    <Networks></Networks>
+    <Devices></Devices>
     <RecentDevices></RecentDevices>
+    <Printer printCount={{printCount}}></Printer>
+    <ImageTotals></ImageTotals>
     </div><!-- .wrapper -->
   </script>
   <script src="js/components.js"></script>

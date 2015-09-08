@@ -14,7 +14,7 @@ body {
   right: 0;
 
   margin: 0;
-  padding: 0;
+  padding: 3rem;
 
   z-index: -100;
   display: none;
@@ -44,9 +44,35 @@ body {
   -webkit-animation: outgoing 4s forwards;
 }
 
+/* tables full-width */
+.view table {
+  width: 100%;
+}
+
+.view td {
+  padding: 1rem;
+  border: 1px solid #fff;
+}
+
+/*  general styling for matrics */
+.view .metric {
+  font-size: 12vw;
+  padding: 0 0 10vh 0;
+  margin: 0;
+  line-height: 12vw;
+}
+
+.view .value {
+  color: blue;
+}
+
 /*
   View: images
 */
+.view#images {
+  padding: 0;
+}
+
 .view#images div {
   height: 50%;
   width: 50%;
@@ -56,16 +82,4 @@ body {
 
 .view#images img {
   width: 100%;
-}
-
-/*
-  View: recent-devuce
-*/
-.view#recent-devices table {
-  width: 100%;
-}
-
-.view#recent-devices td {
-  padding: 1rem;
-  border: 1px solid #fff;
 }

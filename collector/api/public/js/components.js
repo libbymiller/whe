@@ -13,13 +13,12 @@ var ImagesComponent = Ractive.extend({
 
 var RecentDevicesComponent = Ractive.extend({ template: '#ui-recent-devices' });
 
-
-var NetworksComponent = Ractive.extend({ template: '#ui-networks' });
-
 Ractive.components = {
   View: Ractive.extend({ template: '#ui-view' }),
+  Printer: Ractive.extend({ template: '#ui-printer' }),
+  Devices: Ractive.extend({ template: '#ui-devices' }),
+  ImageTotals: Ractive.extend({ template: '#ui-image-totals' }),
   Images: ImagesComponent,
-  Networks: NetworksComponent,
   RecentDevices: RecentDevicesComponent,
   Credits: Ractive.extend({ template: '#ui-credits' })
 };

@@ -1,5 +1,6 @@
 var ractive,
     triggerStartTime = Date.now(),
+    printLengthPerPrintCm = 5,
     minTriggerResetTimeMs = 3 * 1000,
     viewTransitionTimeMs = 4000,
     timeBetweenViewsMs = viewTransitionTimeMs + 10000;
@@ -16,12 +17,23 @@ function initWithConfig(config) {
       recentDevices: function () {
         var devices = _.sortByOrder(this.get('metadata'), ['time']);
         return devices;
+      },
+      deviceTotalsByManufacturer: function () {
+        return _.countBy(this.get('metadata'), 'company');
+      },
+      printLength: function () {
+        return this.get('printCount') * printLengthPerPrintCm;
+      },
+      totalCameras: function () {
+        return this.get('latestImages').length;
       }
     },
     data: {
       collectorBase: collectorBase,
       currentView: 'images',
       isTriggering: false,
+      printCount: 0,
+      imageCount: 0,
       filterNoAps: function (data) {
         return _.filter(data, function (d) {
           return d.aps != '';
@@ -44,6 +56,15 @@ function initWithConfig(config) {
   client.subscribe('/reload', handleReload);
   client.subscribe('/render', handleRender);
   handleRender({}); // Initial render
+
+
+  function incrementPrintCount() {
+    ractive.set('printCount', ractive.get('printCount') + 1);
+  }
+
+  function incrementImageCount() {
+    ractive.set('imageCount', ractive.get('imageCount') + 1);
+  }
 
   // Transition to new view when the
   // 'nextView' property is set
@@ -110,11 +131,15 @@ function initWithConfig(config) {
 
   function handleRender(msg) {
     console.log('RENDER', msg);
+
+    incrementPrintCount();
+
     $.get(collectorBase + '/state')
       .then(function (data) {
         console.log('data', data);
         window.d = data;
         ractive.set(data);
+        incrementImageCount();
 
         var renderInterval = Date.now() - triggerStartTime,
         timeLeft = minTriggerResetTimeMs - renderInterval;
