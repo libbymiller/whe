@@ -79,7 +79,10 @@
   </script>
   <script id="ui-recent-devices" type="text/ractive">
     <View name="recent-devices">
-      <h2>Most Recent Devices</h2>
+      <h2 class="hd">
+        <img src="/images/icons/devices.svg" />
+        Most Recent Devices
+      </h2>
       <table>
         {{#recentDevices}}
           <tr>
@@ -114,7 +117,10 @@
   </script>
   <script id="ui-devices" type="text/ractive">
     <View name="devices">
-      <h2>Devices</h2>
+      <h2 class="hd">
+        <img src="/images/icons/devices.svg" />
+        Total devices
+      </h2>
       <table>
         {{#deviceTotalsByManufacturer:key}}
           <tr>
@@ -131,7 +137,10 @@
   </script>
   <script id="ui-printer" type="text/ractive">
     <View name="printer">
-      <h2>Now Printing</h2>
+      <h2 class="hd">
+        <img src="/images/icons/printer.svg" />
+        Now Printing
+      </h2>
       <p class="metric">
         <span class="value">{{printCount}}</span>
          times printed

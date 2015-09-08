@@ -60,6 +60,17 @@ body {
   display: none;
 }
 
+.view .hd {
+  height: 10vh;
+  line-height: 10vh;
+}
+
+.view .hd img {
+  height: 10vh;
+  vertical-align: middle;
+  padding-right: 2vw;
+}
+
 .view.current {
   display: block;
 }
@@ -93,7 +104,9 @@ body {
 
 .view td {
   padding: 1rem;
-  border: 1px solid #fff;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 244, 0.2);
+  font-size: 5rem;
 }
 
 /*  general styling for matrics */
@@ -105,7 +118,7 @@ body {
 }
 
 .view .value {
-  color: blue;
+  color: rgb(1,98,187);
 }
 
 /* new data strip along bottom */
