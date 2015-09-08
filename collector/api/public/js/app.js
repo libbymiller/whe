@@ -21,6 +21,9 @@ function initWithConfig(config) {
       deviceTotalsByManufacturer: function () {
         return _.countBy(this.get('metadata'), 'shortName');
       },
+      totalDevices: function () {
+        return this.get('metadata').length;
+      },
       printLength: function () {
         return this.get('printCount') * printLengthPerPrintCm;
       },

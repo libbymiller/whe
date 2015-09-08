@@ -91,17 +91,6 @@
       </table>
     </View>
   </script>
-  <script id="ui-devices-total" type="text/ractive">
-    <View name="devices-total">
-      <h2>Devices</h2>
-      <ol>
-        {{#devices.breakdown}}
-          <li>{{manufacturer}} - {{count}}</li>
-        {{/devices.breakdown}}
-        <li>Total - {{devices.total}}</li>
-      </ol>
-    </View>
-  </script>
   <script id="ui-images" type="text/ractive">
     <View name="images">
       {{#randomImages:index}}
@@ -133,6 +122,10 @@
             <td>{{.}}</td>
           </tr>
         {{/}}
+        <tr>
+          <td>Total</td>
+          <td>{{totalDevices}}</td>
+        </tr>
       </table>
     </View>
   </script>
