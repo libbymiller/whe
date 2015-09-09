@@ -156,6 +156,11 @@ receipt printer
 
   Remove `console=ttyAMA0,115200`
 
+  Add following line to `shared/config.json`:
+
+    "printer": {
+      "devicePath": "/dev/ttyAMA0"
+    }
 
 
 Reboot and test by connecting to the network and opening a browser, making sure you unplug ethernet
