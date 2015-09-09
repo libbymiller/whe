@@ -123,10 +123,10 @@ body {
 
 /*  general styling for matrics */
 .view .metric {
-  font-size: 12vw;
+  font-size: 12rem;
   padding: 0 0 10vh 0;
   margin: 0;
-  line-height: 12vw;
+  line-height: 12rem;
 }
 
 .view .value {
