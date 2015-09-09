@@ -33,7 +33,7 @@ var ImagesComponent = Ractive.extend({
   oninit: function () {
     console.log('init');
     this.root.observe('latestImages', this.randomiseImages);
-    setInterval(this.randomiseImages.bind(this), 5000);
+    //setInterval(this.randomiseImages.bind(this), 5000);
   },
   randomiseImages: function () {
     var img = this.get('latestImages') || [];
