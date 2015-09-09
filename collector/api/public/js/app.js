@@ -1,4 +1,5 @@
 var ractive,
+    viewCount = 0,
     triggerStartTime = Date.now(),
     printLengthPerPrintCm = 5,
     minTriggerResetTimeMs = 3 * 1000,
@@ -121,16 +122,22 @@ function initWithConfig(config) {
     var currentView = ractive.get('currentView'),
         timeBetweenViewsMs,
         nextView,
-        views = _.map(ractive.findAll('.view'), function(x) {
-      var viewId = x.getAttribute('id');
+        views;
 
-      if(viewId != currentView) {
-        return viewId;
-      }
-    });
+    if(viewCount % 3 === 0 && currentView != 'images') {
+      nextView = 'images';
+    } else {
+      views = _.map(ractive.findAll('.view'), function(x) {
+        var viewId = x.getAttribute('id');
 
-    views = _.compact(views);
-    nextView = _.sample(views);
+        if(viewId != currentView) {
+          return viewId;
+        }
+      });
+
+      views = _.compact(views);
+      nextView = _.sample(views);
+    }
 
     if (viewInUrlHash()) {
       console.warn('URL hash is overriding random view selection');
@@ -146,6 +153,7 @@ function initWithConfig(config) {
       timeBetweenViewsMs = viewTransitionTimeMs + 5000;
     }
 
+    viewCount++;
     setTimeout(renderNextView, timeBetweenViewsMs);
   }
 
