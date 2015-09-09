@@ -14,7 +14,8 @@ function initWithConfig(config) {
     template: '#ui-template',
     computed: {
       recentDevices: function () {
-        var devices = _.sortByOrder(this.get('metadata'), ['time']);
+        // var devices = _.sortByOrder(this.get('metadata'), ['time']);
+        var devices = _.shuffle(this.get('metadata'));
         return devices;
       },
       deviceTotalsByManufacturer: function () {
