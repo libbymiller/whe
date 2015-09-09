@@ -148,9 +148,9 @@ function initWithConfig(config) {
     ractive.set('nextView', nextView);
 
     if(nextView === 'images') {
-      timeBetweenViewsMs = viewTransitionTimeMs + 10000;
+      timeBetweenViewsMs = viewTransitionTimeMs + 15000;
     } else {
-      timeBetweenViewsMs = viewTransitionTimeMs + 5000;
+      timeBetweenViewsMs = viewTransitionTimeMs + 10000;
     }
 
     viewCount++;
