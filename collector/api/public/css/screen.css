@@ -2,6 +2,7 @@ body {
   font-family: 'open-sans';
   background: black;
   color: white;
+  overflow: hidden;
 }
 
 /*
