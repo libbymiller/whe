@@ -129,7 +129,7 @@ function initWithConfig(config) {
         nextView,
         views;
 
-    if(viewCount % 3 === 0 && currentView != 'images') {
+    if(viewCount % 2 === 0 && currentView != 'images') {
       nextView = 'images';
     } else {
       views = _.map(ractive.findAll('.view'), function(x) {
