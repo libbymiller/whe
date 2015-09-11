@@ -85,6 +85,10 @@ function initWithConfig(config) {
   client.subscribe('/render', handleRender);
   handleRender({}); // Initial render
 
+  document.body.addEventListener('click', function () {
+    document.body.webkitRequestFullscreen();
+  });
+
 
   function incrementPrintCount() {
     ractive.set('printCount', ractive.get('printCount') + 1);
