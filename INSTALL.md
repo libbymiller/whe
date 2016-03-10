@@ -132,7 +132,10 @@ install supervisord for process management
     sudo cp shared/supervisor.conf /etc/init.d/supervisor
     sudo cp collector/collector_supervisor.conf /etc/supervisor/conf.d/collector.conf
 
-receipt printer
+---
+
+Receipt printer
+--
 
 Pins (http://wiringpi.com/pins/)
 
