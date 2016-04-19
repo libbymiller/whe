@@ -119,7 +119,8 @@ app.get('/state', function (req, res) {
     devices: metadata.length,
     metadata: metadata.toJSON().slice(0, config.numDevicesToReturn).map(sanitise),
     images  : images.toJSON(),
-    latestImages : _.pluck(images.toJSON(), 'source').sort().map(latestImageUrl)
+    //libby latestImages : _.pluck(images.toJSON(), 'source').sort().map(latestImageUrl)
+    latestImages : libbyLatestImages()
   });
 });
 
@@ -219,6 +220,52 @@ app.get('/image/latest/:source', function (req, res) {
   });
 });
 
+//libby
+
+function libbyLatestImages(source) {
+  console.log("\n\n\nZZZZZZZZZZZ");
+
+  var images_list = [];
+  console.log("latest images");
+  console.log(images);
+  for(var i =0; i <images.models.length; i++){
+    var im = images.models[i];
+    console.log("im");
+    console.log(im);
+    if(im){
+       console.log("files");
+       console.log(im.files);
+       console.log(im.files[0].url);
+       images_list.push(im.files[0].url);
+    }
+  }
+  console.log("images list");
+  console.log(images_list);
+  return images_list;
+
+}
+
+
+app.get('/latestimages', function (req, res) {
+  var images_list = [];
+  console.log("latest images");
+  console.log(images);
+  for(var i =0; i <images.models.length; i++){
+    var im = images.models[i];
+    console.log("im");
+    console.log(im);
+    if(im){
+       console.log("files");
+       console.log(im.files);
+       console.log(im.files[0].url);
+       images_list.push(im.files[0].url);
+    }
+  }
+  console.log("images list");
+  console.log(images_list);
+  res.json(images_list);
+});
+
 app.get('/image/:name', function (req, res) {
   var name = req.params.name,
       file = images.findFile(name);
@@ -246,7 +293,7 @@ app.post('/image', function (req, res) {
 
   if (req.body && files.length > 0) {
     req.body.files = files;
-    console.log('body', req.body);
+    console.log('\n\nIMAGE body', req.body);
     images.replace(req.body);
     incrementRenderCounter();
   } else {

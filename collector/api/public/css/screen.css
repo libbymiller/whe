@@ -119,15 +119,16 @@ body {
   padding: 1rem;
   border: none;
   border-bottom: 1px solid rgba(255, 255, 244, 0.2);
-  font-size: 5rem;
+/*  font-size: 5rem;*/
+  font-size: 4rem;
 }
 
 /*  general styling for matrics */
 .view .metric {
-  font-size: 12rem;
+  font-size: 9rem;
   padding: 0 0 10vh 0;
   margin: 0;
-  line-height: 12rem;
+  line-height: 9rem;
 }
 
 .view .value {

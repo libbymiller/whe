@@ -89,7 +89,7 @@
             <tr>
               <td>{{shortName}}</td>
               <td>{{id}}</td>
-              <td>{{source}}</td>
+              <td>{{aps}}</td>
             </tr>
           {{/recentDevices}}
         </table>
@@ -102,7 +102,7 @@
       <div>
         <img src="{{.}}" id="img-{{index}}" />
       </div>
-      {{/randomImages}}
+      {{/randomImagesImages}}
     </View>
   </script>
   <script id="ui-image-totals" type="text/ractive">
@@ -112,8 +112,9 @@
         images captured
       </p>
       <p class="metric">
-        <span class="value">{{totalCameras}}</span>
-         hidden cameras
+<!--        <span class="value">{{totalCameras}}</span>-->
+       <span class="value">1</span>
+         hidden camera
       </p>
     </View>
   </script>
@@ -139,27 +140,11 @@
       </div>
     </View>
   </script>
-  <script id="ui-printer" type="text/ractive">
-    <View name="printer">
-      <h2 class="hd">
-        <img src="/images/icons/printer.svg" />
-        Now Printing
-      </h2>
-      <p class="metric">
-        <span class="value">{{printCount}}</span>
-         times printed
-      </p>
-      <p class="metric">
-        Total print length <span class="value">{{printLength}}</span>cm
-      </p>
-    </View>
-  </script>
   <script id="ui-template" type="text/ractive">
     <div class="wrapper">
       <Images></Images>
       <Devices></Devices>
       <RecentDevices></RecentDevices>
-      <Printer printCount={{printCount}}></Printer>
       <ImageTotals></ImageTotals>
       <div class="new-data">
         <div class="new-data-inner {{ isTriggering ? 'flyInBottom' : '' }}">

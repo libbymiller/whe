@@ -37,15 +37,25 @@ var ImagesComponent = Ractive.extend({
   },
   randomiseImages: function () {
     var img = this.get('latestImages') || [];
-    this.set('randomImages', _.sample(img, 4));
+    var num_to_drop = 0;
+    console.log("ZZZZ num to drop is "+num_to_drop);
+    if(img.length > 4){
+       num_to_drop = img.length - 4;
+    }
+    console.log("ZZZZ num to drop is "+num_to_drop);
+//    this.set('randomImages', _.sample(img, 4));
+    this.set('randomImages', _.drop(img, num_to_drop).reverse());
   }
+//  lastFourImages: function () {
+//    var img = this.get('latestImages') || [];
+  //  this.set('lastImages', img.slice(-4));
+  //}
 });
 
 var RecentDevicesComponent = Ractive.extend({ template: '#ui-recent-devices' });
 
 Ractive.components = {
   View: ViewComponent,
-  Printer: Ractive.extend({ template: '#ui-printer' }),
   Devices: Ractive.extend({ template: '#ui-devices' }),
   ImageTotals: Ractive.extend({ template: '#ui-image-totals' }),
   Images: ImagesComponent,
