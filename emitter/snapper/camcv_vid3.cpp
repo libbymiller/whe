@@ -222,7 +222,7 @@ void curl_post()
 
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
-    curl_easy_setopt(curl, CURLOPT_URL, "http://10.0.0.200:3000/faye");
+    curl_easy_setopt(curl, CURLOPT_URL, "http://192.168.0.1:3000/faye");
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK)
