@@ -1,7 +1,8 @@
 module.exports = function (sequelize, DataTypes) {
   return sequelize.define('manufacturer', {
     id: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      primaryKey: true
     },
     shortName: {
       type: DataTypes.STRING
